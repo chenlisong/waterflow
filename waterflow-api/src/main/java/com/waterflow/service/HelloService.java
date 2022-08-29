@@ -1,0 +1,8 @@
+package com.waterflow.service;
+
+
+public interface HelloService {
+
+    String hello(String name);
+
+}
