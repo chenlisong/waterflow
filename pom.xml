@@ -12,6 +12,7 @@
 	<modules>
 		<module>waterflow-api</module>
 		<module>waterflow-test</module>
+		<module>waterflow-web</module>
 	</modules>
 
 	<properties>

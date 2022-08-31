@@ -1,0 +1,6 @@
+waterflow web application.
+
+
+http://localhost:2222/control/hello?name=lisi
+
+java -jar com.waterflow.web.init.Application.class /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar -DLOG_HOME=/opt/logs/waterflow-1/
