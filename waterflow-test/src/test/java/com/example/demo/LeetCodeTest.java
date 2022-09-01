@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.waterflow.test.leetcode.binarysearchtree.TreeNode;
+import com.waterflow.test.leetcode.rotateddigits.Solution;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,14 @@ public class LeetCodeTest {
         TreeNode node = searchTreeSolution.bstFromPreorder(new int[] {8, 5, 1, 7, 10, 12});
         logger.info(node.toString());
 
+    }
+
+    com.waterflow.test.leetcode.rotateddigits.Solution rotateddigitsSolution
+                = new Solution();
+    @Test
+    public void rotateddigitsTest() {
+        int cnt = rotateddigitsSolution.rotatedDigits(10);
+        System.out.println(cnt);
     }
 
 }
