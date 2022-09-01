@@ -3,4 +3,8 @@ waterflow web application.
 
 http://localhost:2222/control/hello?name=lisi
 
-java -jar com.waterflow.web.init.Application.class /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar -DLOG_HOME=/opt/logs/waterflow-1/
+# 正常启动
+java -jar /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar
+
+# 切换环境启动
+java -Dspring.profiles.active=online -jar /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar
