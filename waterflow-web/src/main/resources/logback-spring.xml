@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
+
+    <springProperty scope="context" name="LOG_HOME" source="logback.dir"/>
+    <springProperty scope="context" name="PROJECT_NAME" source="spring.application.name"/>
+
     <!-- 定义日志组件上下文路径名，用于区分不同应用程序的记录 -->
-    <contextName>waterflow-web</contextName>
+    <contextName>${PROJECT_NAME}</contextName>
     <!--定义日志文件的存储地址目录 -->
-<!--    <property name="LOG_HOME" value="/Users/chenlisong/Documents/code/logs/waterflow-web/"/>-->
-    <property name="LOG_HOME" value="${LOG_HOME}"/>
+    <!--    <property name="LOG_HOME" value="/Users/chenlisong/Documents/code/logs/waterflow-web/"/>-->
 
     <!-- 控制台输出的配置 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -76,5 +79,5 @@
     </root>
 
     <!--自定义日志级别配置，指定我们项目都是debug级别 -->
-    <logger name="com.example.demo,com.waterflow" level="debug"/>
+    <logger name="com.waterflow.web" level="debug"/>
 </configuration>
