@@ -30,4 +30,13 @@ public class LeetCodeTest {
         System.out.println(cnt);
     }
 
+    com.waterflow.test.leetcode.stringanagram.Solution stringAnagram
+                = new com.waterflow.test.leetcode.stringanagram.Solution();
+
+    @Test
+    public void stringAnagramTest() {
+        int cnt = stringAnagram.minSteps("bab", "aba");
+        logger.info("cnt is {}", cnt);
+    }
+
 }
