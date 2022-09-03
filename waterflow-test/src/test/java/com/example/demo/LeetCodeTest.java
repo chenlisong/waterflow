@@ -39,4 +39,12 @@ public class LeetCodeTest {
         logger.info("cnt is {}", cnt);
     }
 
+    com.waterflow.test.leetcode.hhvs.Solution hhvsSolution
+            = new com.waterflow.test.leetcode.hhvs.Solution();
+    @Test
+    public void hhvsTest() {
+        String[] dist = hhvsSolution.permutation("abc");
+        logger.info("hhvs dist is {}", dist);
+    }
+
 }
