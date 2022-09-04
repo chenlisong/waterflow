@@ -47,4 +47,11 @@ public class LeetCodeTest {
         logger.info("hhvs dist is {}", dist);
     }
 
+    com.waterflow.test.leetcode.kfactorofn.Solution kfactorfn
+            = new com.waterflow.test.leetcode.kfactorofn.Solution();
+    @Test
+    public void kfactorfnTest() {
+        System.out.println(new com.waterflow.test.leetcode.kfactorofn.Solution().kthFactor(12, 3));
+    }
+
 }
