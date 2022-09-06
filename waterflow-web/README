@@ -15,6 +15,5 @@ docker pull redis:latest
 docker run -itd --name redis-local -p 6379:6379 redis
 docker exec -it redis-local /bin/bash
 ./redis-cli
-
 exit
 lsof -i:6379
