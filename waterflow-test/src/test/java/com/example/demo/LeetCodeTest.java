@@ -54,4 +54,11 @@ public class LeetCodeTest {
         System.out.println(new com.waterflow.test.leetcode.kfactorofn.Solution().kthFactor(12, 3));
     }
 
+    com.waterflow.test.leetcode.maxnum.Solution maxnumSolution
+            = new com.waterflow.test.leetcode.maxnum.Solution();
+    @Test
+    public void maxnumTest() {
+        logger.info("max num test, 96669 target num is {}", maxnumSolution.maximum69Number(96669));
+    }
+
 }
