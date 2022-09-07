@@ -1,0 +1,60 @@
+```shell
+MacBook-Pro:~ chenlisong$ docker exec -it redis-local /bin/bash
+root@28130532f6d3:/data# redis-cli
+127.0.0.1:6379> strlen ireader
+(integer) 36 #查看字符串长度
+127.0.0.1:6379> getrange ireader 28 34
+"aterflo" #获取指定位置的字符串
+127.0.0.1:6379> get ireader
+"wuhan.chenlisong.baicaiche.waterflow"
+
+127.0.0.1:6379> setrange ireader 28 helloworld
+(integer) 38 @替换指定位置文本
+127.0.0.1:6379> get ireader
+"wuhan.chenlisong.baicaiche.whelloworld"
+
+127.0.0.1:6379> append ireader .cool.append
+(integer) 50 #追加补充文本
+127.0.0.1:6379> get ireader
+"wuhan.chenlisong.baicaiche.whelloworld.cool.append"
+
+```
+
+redis的数值结构
+```shell
+root@28130532f6d3:/data# redis-cli
+127.0.0.1:6379> set water 42
+OK
+127.0.0.1:6379> incrby water 100
+(integer) 142 #增加100，int加值
+127.0.0.1:6379> get water
+"142"
+127.0.0.1:6379> decrby water 99
+(integer) 43 #减少99，int减值
+127.0.0.1:6379> incr water
+(integer) 44
+127.0.0.1:6379> set water 9223372036854775807
+OK
+127.0.0.1:6379> incr water
+(error) ERR increment or decrement would overflow  #超出Integer.MAX_VALUE
+127.0.0.1:6379> expire water 60
+(integer) 1 #设置失效期，默认秒
+127.0.0.1:6379> ttl water
+(integer) 56 #查看有效期
+127.0.0.1:6379> del water
+(integer) 1
+127.0.0.1:6379> get water
+(nil)
+
+```
+
+redis的集合结构，list
+数据结构：双向链表，首尾插入性能高，随机性访问差
+```shell
+127.0.0.1:6379> lpush water go python java php
+(integer) 4
+127.0.0.1:6379> rpop water
+"go"
+127.0.0.1:6379> lpop water
+"php"
+```
