@@ -52,9 +52,9 @@ redis的集合结构，list
 数据结构：双向链表，首尾插入性能高，随机性访问差
 ```shell
 127.0.0.1:6379> lpush water go python java php
-(integer) 4
+(integer) 4 # 链表左侧顺序插入元素
 127.0.0.1:6379> rpop water
-"go"
+"go" #链表右侧移除并获取
 127.0.0.1:6379> lpop water
 "php"
 ```
