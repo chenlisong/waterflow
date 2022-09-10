@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.waterflow.test.leetcode.binarysearchtree.TreeNode;
 import com.waterflow.test.leetcode.rotateddigits.Solution;
+import net.minidev.json.JSONArray;
 import org.assertj.core.util.DateUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -63,5 +64,15 @@ public class LeetCodeTest {
     public void maxnumTest() {
         logger.info("max num test, 96669 target num is {}", maxnumSolution.maximum69Number(96669));
     }
+
+    com.waterflow.test.leetcode.mergeintervals.Solution mergeIntervalSolution
+            = new com.waterflow.test.leetcode.mergeintervals.Solution();
+    @Test
+    public void mergeIntervalSolutionTest() {
+//        int[][] dist = mergeIntervalSolution.merge(new int[][] {{1,3}, {2,6}, {8,10}, {15,18}});
+        int[][] dist = mergeIntervalSolution.merge(new int[][] {{1,4}, {0,5}});
+        logger.info("dist is {}", dist);
+    }
+
 
 }
