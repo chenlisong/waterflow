@@ -12,14 +12,11 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wltea.analyzer.core.IKSegmenter;
 import org.wltea.analyzer.lucene.IKAnalyzer;
-import org.wltea.analyzer.sample.IKAnalzyerDemo;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +28,12 @@ public class Solution {
     static Logger logger = LoggerFactory.getLogger(Solution.class);
 
     private Directory directory = null;
+
+    private Analyzer analyzer = new IKAnalyzer();
+
+//    public void jcsegAnalyzed() {
+//        analyzer = new JcsegAnalyzer5X();
+//    }
 
     public List<CheModel> loadFile(String filePath) {
         File file = FileUtils.getFile(filePath);
@@ -60,8 +63,6 @@ public class Solution {
     }
 
     public void buildIndex(List<CheModel> cheModels) throws IOException {
-        Analyzer analyzer = new IKAnalyzer();
-
         Directory ramDirectory = new RAMDirectory();
         IndexWriterConfig iwcl = new IndexWriterConfig(Version.LUCENE_4_10_4, analyzer);
         IndexWriter indexWriter = new IndexWriter(ramDirectory, iwcl);
@@ -90,13 +91,13 @@ public class Solution {
 
         DirectoryReader reader = DirectoryReader.open(directory);
         IndexSearcher search = new IndexSearcher(reader);
-        QueryParser brandQueryParse = new QueryParser("brand", new IKAnalyzer());
+        QueryParser brandQueryParse = new QueryParser("brand", analyzer);
         Query branQuery = brandQueryParse.parse(queryModel.getBrandName());
 
-        QueryParser seriesQueryParse = new QueryParser("series", new IKAnalyzer());
+        QueryParser seriesQueryParse = new QueryParser("series", analyzer);
         Query seriesQuery = seriesQueryParse.parse(queryModel.getSeriesName());
 
-        QueryParser modelQueryParse = new QueryParser("model", new IKAnalyzer());
+        QueryParser modelQueryParse = new QueryParser("model", analyzer);
         Query modelQuery = modelQueryParse.parse(queryModel.getModelName());
 
         BooleanQuery distQuery = new BooleanQuery();
@@ -126,19 +127,6 @@ public class Solution {
                     doc.get("brand"), doc.get("series"), doc.get("model"), scoreDoc.score);
         }
         return distModel;
-    }
-
-    public static void main(String[] args) throws Exception{
-        Solution solution = new Solution();
-        List<CheModel> cheModels = solution.loadFile("/Users/chenlisong/Desktop/che-model-withid.csv");
-        logger.info("build index data suc. size is {}", cheModels.size());
-
-        solution.buildIndex(cheModels);
-        CheModel queryModel = new CheModel("奥迪", "A4L", "2019款技术版本");
-        CheModel dist = solution.query(queryModel);
-
-        logger.info("dist model is {}, query is {} ", dist.simpleString(), queryModel.simpleString());
-
     }
 
 }
