@@ -16,6 +16,7 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import java.io.File;
@@ -44,9 +45,15 @@ public class Solution {
         List<CheModel> cheModels = new ArrayList<>();
         try {
             List<String> list = FileUtils.readLines(file);
-            for(String line : list) {
+            fileLoop: for(String line : list) {
                 String[] array = line.split(",");
                 if(array.length == 4) {
+
+                    if(StringUtils.isEmpty(array[0]) || StringUtils.isEmpty(array[1]) ||
+                            StringUtils.isEmpty(array[2])) {
+                        continue fileLoop;
+                    }
+
                     CheModel cheModel = new CheModel();
                     cheModel.setBrandName(array[0]);
                     cheModel.setSeriesName(array[1]);
