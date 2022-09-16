@@ -74,7 +74,7 @@ public class SegmentTest {
                 logger.info("search fail and segment search fail. vin is {}", vin);
             }
 
-            Thread.sleep(500);
+//            Thread.sleep(500);
         }
     }
 }

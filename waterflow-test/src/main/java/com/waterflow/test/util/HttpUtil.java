@@ -7,6 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +23,7 @@ public class HttpUtil {
     /**
      * 最大连接时间
      */
-    public final static int CONNECTION_TIMEOUT = 5;
+    public final static int CONNECTION_TIMEOUT = 3;
     /**
      * JSON格式
      */
@@ -25,7 +31,7 @@ public class HttpUtil {
     /**
      * OkHTTP线程池最大空闲线程数
      */
-    public final static int MAX_IDLE_CONNECTIONS = 100;
+    public final static int MAX_IDLE_CONNECTIONS = 10;
     /**
      * OkHTTP线程池空闲线程存活时间
      */
@@ -38,6 +44,8 @@ public class HttpUtil {
      * 配置重试
      */
     private final static OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder()
+            .addInterceptor(new SwitchProxyInterceptor())
+            .proxySelector(new SwitchProxySelector())
             .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             .connectionPool(new ConnectionPool(MAX_IDLE_CONNECTIONS, KEEP_ALIVE_DURATION, TimeUnit.MINUTES))
             .build();
@@ -67,7 +75,6 @@ public class HttpUtil {
         }
         return null;
     }
-
 
     /**
      * Form表单提交
