@@ -5,6 +5,7 @@ import com.waterflow.test.util.JsoupUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -29,6 +30,19 @@ public class JsoupTest {
         for(Element element: elements) {
             logger.info("title is {}, href is {}", element.attr("title"), element.absUrl("href"));
         }
-        jsoupUtil.wikiGet();
+    }
+
+    @Test
+    public void kuaidailiTest() throws Exception{
+
+        Document document = Jsoup.connect("https://free.kuaidaili.com/free/").get();
+        Elements elements = document.getElementsByTag("tbody");
+        Element element = elements.get(0);
+
+        for(Node node : element.childNodes()) {
+            logger.info("content is {}", element.data());
+        }
+
+
     }
 }
