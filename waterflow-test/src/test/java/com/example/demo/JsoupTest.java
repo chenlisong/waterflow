@@ -43,6 +43,5 @@ public class JsoupTest {
             logger.info("content is {}", element.data());
         }
 
-
     }
 }
