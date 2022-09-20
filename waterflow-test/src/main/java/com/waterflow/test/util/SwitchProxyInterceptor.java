@@ -14,7 +14,8 @@ public class SwitchProxyInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        if("true".equals(chain.request().header("meta.proxy"))){
+        if("true".equals(chain.request().header("meta.proxy"))
+                && SwitchProxySelector.ipPool.length > 0){
             String proxyHeader = chain.request().header("meta.proxy");
             logger.info("inertcept meta header is {}", proxyHeader);
             SwitchProxySelector.proxyThreadLocal.set(SwitchProxySelector.getProxy());

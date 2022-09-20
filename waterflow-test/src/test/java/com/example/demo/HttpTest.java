@@ -30,7 +30,7 @@ public class HttpTest {
 
     @Test
     public void proxyTest() throws Exception{
-//        for(int i=0; i<100; i++) {
+        for(int i=0; i<100; i++) {
             String url = "http://www.baidu.com";
 
             Map<String, String> headers = new HashMap<>();
@@ -43,6 +43,21 @@ public class HttpTest {
             logger.info("http junit test resp is {}", resp);
 
             Thread.sleep(500);
+        }
+    }
+
+    @Test
+    public void vinGetTest() throws Exception{
+//        for(int i=0; i<100; i++) {
+            String url = "http://118.31.113.49/api/vin/v2/index?key=d7ba9fa7634764f2fd5bb81e8183ce18&vin=LC0CG4CG9G1085942";
+
+            Map<String, String> headers = new HashMap<>();
+            headers.put("meta.proxy", "true");
+
+            String resp = HttpUtil.get(url, headers);
+            logger.info("http junit test resp is {}", resp);
+
+            Thread.sleep(100);
 //        }
     }
 }

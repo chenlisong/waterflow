@@ -36,12 +36,25 @@ public class JsoupTest {
     public void kuaidailiTest() throws Exception{
 
         Document document = Jsoup.connect("https://free.kuaidaili.com/free/").get();
-        Elements elements = document.getElementsByTag("tbody");
-        Element element = elements.get(0);
+        Elements ipElements = document.select("td[data-title=IP]");
+        Elements portElements = document.select("td[data-title=PORT]");
 
-        for(Node node : element.childNodes()) {
-            logger.info("content is {}", element.data());
+        for(Element element : ipElements) {
+            logger.info("ip is {}", element.childNode(0).toString());
         }
 
+//        Elements elements = document.getElementsByTag("tbody");
+//        Element element = elements.get(0);
+//
+//        for(Node node : element.childNodes()) {
+//            logger.info("content is {}", node.toString());
+//        }
     }
+
+
+    @Test
+    public void proxyGetTest() throws Exception{
+        jsoupUtil.proxyGet();
+    }
+
 }
