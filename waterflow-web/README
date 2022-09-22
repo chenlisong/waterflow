@@ -6,8 +6,11 @@ http://localhost:2222/control/hello?name=lisi
 # 正常启动
 java -jar /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar
 
-# 切换环境启动
+# 启动线上环境
 java -Dspring.profiles.active=online -jar /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar
+
+# 启动测试环境
+java -Dspring.profiles.active=dev -jar /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar
 
 # 启动容器-redis
 docker images
