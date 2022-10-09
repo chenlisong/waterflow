@@ -14,6 +14,7 @@
 		<module>waterflow-test</module>
 		<module>waterflow-web</module>
 		<module>waterflow-rich</module>
+		<module>waterflow-common</module>
 	</modules>
 
 	<properties>
