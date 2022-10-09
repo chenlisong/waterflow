@@ -37,7 +37,9 @@ public class SegmentTest {
 
         segmentSolution.buildIndex(cheModels);
 
-        CheModel queryModel = new CheModel("奥迪", "A4L", "2011款技术版本");
+//        CheModel queryModel = new CheModel("奥迪", "A4L", "2011款技术版本");
+        CheModel queryModel = new CheModel("2018款保时捷Macan", "2018款保时捷Macan", "2018款保时捷Macan");
+
         CheModel dist = segmentSolution.query(queryModel);
 
         logger.info("dist model is {}, query is {} ", dist.simpleString(), queryModel.simpleString());
