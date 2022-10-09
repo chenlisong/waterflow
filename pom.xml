@@ -13,6 +13,7 @@
 		<module>waterflow-api</module>
 		<module>waterflow-test</module>
 		<module>waterflow-web</module>
+		<module>waterflow-rich</module>
 	</modules>
 
 	<properties>

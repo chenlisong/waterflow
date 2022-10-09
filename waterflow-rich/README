@@ -1,0 +1,27 @@
+waterflow rich application.
+
+http://localhost:2224/control/hello?name=cls
+
+# 正常启动
+java -jar /opt/repository/com/cls/waterflow-rich/1.0.0-SNAPSHOT/waterflow-rich-1.0.0-SNAPSHOT.jar
+
+# 启动线上环境
+java -Dspring.profiles.active=online -jar /opt/repository/com/cls/waterflow-rich/1.0.0-SNAPSHOT/waterflow-rich-1.0.0-SNAPSHOT.jar
+
+# 启动测试环境
+java -Dspring.profiles.active=dev -jar /opt/repository/com/cls/waterflow-rich/1.0.0-SNAPSHOT/waterflow-rich-1.0.0-SNAPSHOT.jar
+
+
+# 安装容器-mysql
+docker search mysql
+docker pull mysql:latest
+docker iamges
+docker run -itd --name mysql-test -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql
+docker ps
+docker exec -it mysql-test /bin/sh
+
+# 启动容器-mysql
+docker run -itd --name mysql-test -p 3306:3306 mysql
+docker exec -it mysql-test /bin/bash
+sh-4.4# mysql -h localhost -u root -p
+
