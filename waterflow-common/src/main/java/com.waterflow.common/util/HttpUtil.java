@@ -4,7 +4,6 @@ import okhttp3.*;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.util.Map;
@@ -81,7 +80,7 @@ public class HttpUtil {
         try {
 
             FormBody.Builder builder = new FormBody.Builder();
-            if (!CollectionUtils.isEmpty(params)) {
+            if (params != null && params.size() > 0) {
                 params.forEach(builder::add);
             }
             FormBody body = builder.build();
@@ -96,7 +95,6 @@ public class HttpUtil {
         }
         return null;
     }
-
 
     /**
      * 简单post请求

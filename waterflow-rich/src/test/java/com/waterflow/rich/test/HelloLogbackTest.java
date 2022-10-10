@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.waterflow.rich.test;
 
 import com.waterflow.rich.init.Application;
 import org.junit.Test;
