@@ -8,3 +8,4 @@
 /waterflow-common/target/
 /waterflow-rich/fund/*.data
 /waterflow-rich/quotes/*.data
+/waterflow-rich/aliyun/*.json
