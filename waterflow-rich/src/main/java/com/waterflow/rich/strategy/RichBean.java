@@ -32,7 +32,7 @@ public class RichBean {
     // 拥有的份额 buy strategy
     private int share;
 
-    @JSONField(serialize = false)
+    @JSONField(serialize = true, ordinal = 4)
     // 买入份额 buy strategy
     private int buyShare;
 

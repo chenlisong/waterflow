@@ -55,7 +55,7 @@ public class RetreatTest {
 
 		retreat.profit();
 		retreat.output2File("001018");
-		retreat.upload("001018");
+//		retreat.upload("001018");
 	}
 
 	@Test

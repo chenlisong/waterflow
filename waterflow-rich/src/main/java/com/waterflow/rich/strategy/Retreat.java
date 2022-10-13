@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateParser;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,6 +153,18 @@ public class Retreat {
     }
 
     private void deal(RichBean richBean, int buyShare, double initCash) {
+        // code for debug
+        try{
+            long begin = DateUtils.parseDate("2020-07-20", "yyyy-MM-dd").getTime();
+            long end = DateUtils.parseDate("2020-07-25", "yyyy-MM-dd").getTime();
+
+            if(richBean.getTime().getTime() > begin && richBean.getTime().getTime() < end) {
+                logger.info("deal rich bean is {}", richBean.toString());
+            }
+        }catch (Exception e) {
+            logger.error("error.", e);
+        }
+
         if(pre == null) {
             richBean.setCash(initCash);
             richBean.setShare(0);
@@ -161,7 +174,8 @@ public class Retreat {
             richBean.setCash(pre.getCash());
             richBean.setShare(pre.getShare());
             richBean.setBuyShare(pre.getBuyShare());
-            richBean.setMarketValue(pre.getMarketValue());
+            double marketValue = richBean.getShare() * richBean.getPrice() + richBean.getCash();
+            richBean.setMarketValue(marketValue);
         }
 
         if(pre != richBean && buyShare != 0) {
@@ -169,7 +183,8 @@ public class Retreat {
             // 买入的成本
             double buyPrice = buyShare * richBean.getPrice();
 
-            if(pre.getCash() - buyPrice < 0) {
+            // 买入时现金要足够，卖出时share要足够
+            if(pre.getCash() - buyPrice < 0 || pre.getShare() + buyShare < 0) {
                 logger.info("cash not enough, time is {}, buyShare is {}. buyPrice is {}"
                     , richBean.getTime(), buyShare, buyPrice);
                 return;
@@ -181,12 +196,12 @@ public class Retreat {
             richBean.setMarketValue(richBean.getPrice() * richBean.getShare() + richBean.getCash());
 
             if(buyShare > 0) {
-                logger.info("deal suc, buy info: time is {}, share is {}, price is {}, market value is {}"
-                    , DateFormatUtils.format(richBean.getTime(), "yyyyMMdd"), buyShare, richBean.getPrice(), richBean.getMarketValue());
+                logger.info("deal suc, buy info: time is {}, share is {}, own share is {}, price is {}, cash is {}, market value is {}"
+                    , DateFormatUtils.format(richBean.getTime(), "yyyyMMdd"), buyShare, richBean.getShare(), richBean.getPrice(), richBean.getCash(), richBean.getMarketValue());
             }
             if(buyShare < 0) {
-                logger.info("deal suc, buy info: time is {}, share is {}, price is {}, market value is {}"
-                        , DateFormatUtils.format(richBean.getTime(), "yyyyMMdd"), buyShare, richBean.getPrice(), richBean.getMarketValue());
+                logger.info("deal suc, sell info: time is {}, share is {}, own share is {}, price is {}, cash is {}, market value is {}"
+                        , DateFormatUtils.format(richBean.getTime(), "yyyyMMdd"), buyShare, richBean.getShare(), richBean.getPrice(), richBean.getCash(), richBean.getMarketValue());
             }
         }
 
