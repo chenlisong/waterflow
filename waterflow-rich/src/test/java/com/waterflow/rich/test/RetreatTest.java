@@ -4,13 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.waterflow.common.util.HttpUtil;
-import com.waterflow.rich.dao.TestBeanRepository;
 import com.waterflow.rich.grab.FundGrab;
-import com.waterflow.rich.grab.QuoteGrab;
 import com.waterflow.rich.init.Application;
 import com.waterflow.rich.strategy.Retreat;
 import com.waterflow.rich.strategy.RichBean;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
@@ -22,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -42,8 +41,8 @@ public class RetreatTest {
 	public void retreatStrategyTest() throws Exception{
 
 		String endpoint = "oss-cn-beijing.aliyuncs.com";
-		String accessKeyId = "";
-		String accessKeySecret = "";
+		String accessKeyId = "LTAI8JY5sat7IJ6d";
+		String accessKeySecret = "6ucOoXXd6ninY8lEQUfL1fNUgioa9p";
 		String bucketName = "chenlisong";
 
 		retreat.aliyunConfig(accessKeyId, accessKeySecret, endpoint, bucketName);
@@ -55,7 +54,7 @@ public class RetreatTest {
 
 		retreat.profit();
 		retreat.output2File("001018");
-//		retreat.upload("001018");
+		retreat.upload("001018");
 	}
 
 	@Test
@@ -89,6 +88,15 @@ public class RetreatTest {
 
 		HttpUtil.download(urlPath, filePath);
 		retreat.upload("000000");
+	}
+
+	@Test
+	public void doubleTest() {
+		double a = 1.2323232323d;
+		double b = NumberUtils.toScaledBigDecimal(a, NumberUtils.INTEGER_ONE, RoundingMode.HALF_UP).doubleValue();
+
+		logger.info("a is {}, b is {}", a, b);
+
 	}
 
 }

@@ -8,13 +8,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateParser;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +30,8 @@ public class Retreat {
     String accessKeyId = "";
     String accessKeySecret = "";
     String bucketName = "";
+
+    int skipTime = 12 * 3;
     // 填写文件完整路径。文件完整路径中不能包含Bucket名称。
 
     Logger logger = LoggerFactory.getLogger(Retreat.class);
@@ -93,7 +95,7 @@ public class Retreat {
         double cash = 100000.0;
 
         long diffTime = 1000 * 60 * 60 * 24 * 10;
-        int skipTime = 12 * 3;
+
 
         RichBean firstRichBean = richBeans.get(0);
 
@@ -155,8 +157,8 @@ public class Retreat {
     private void deal(RichBean richBean, int buyShare, double initCash) {
         // code for debug
         try{
-            long begin = DateUtils.parseDate("2020-07-20", "yyyy-MM-dd").getTime();
-            long end = DateUtils.parseDate("2020-07-25", "yyyy-MM-dd").getTime();
+            long begin = DateUtils.parseDate("2022-01-19", "yyyy-MM-dd").getTime();
+            long end = DateUtils.parseDate("2022-01-22", "yyyy-MM-dd").getTime();
 
             if(richBean.getTime().getTime() > begin && richBean.getTime().getTime() < end) {
                 logger.info("deal rich bean is {}", richBean.toString());
@@ -216,8 +218,22 @@ public class Retreat {
     }
 
     public void output2File(String fundCode) throws Exception{
+
+        Date date = DateUtils.addMonths(richBeans.get(0).getTime(), skipTime);
+
+        List<RichBean> outputRichBeans = richBeans.stream()
+                .filter(richBean -> {
+                    double newCash = NumberUtils.toScaledBigDecimal(richBean.getCash(), NumberUtils.INTEGER_ONE, RoundingMode.HALF_UP).doubleValue();
+                    double newMarketValue = NumberUtils.toScaledBigDecimal(richBean.getMarketValue(), NumberUtils.INTEGER_ONE, RoundingMode.HALF_UP).doubleValue();
+                    richBean.setCash(newCash);
+                    richBean.setMarketValue(newMarketValue);
+                    return richBean.getTime().getTime() - date.getTime() > 0;
+                })
+                .collect(Collectors.toList());
+
         File file = new File(filePath(fundCode));
-        FileUtils.writeByteArrayToFile(file, JSON.toJSONBytes(richBeans, SerializerFeature.WriteNonStringValueAsString));
+//        FileUtils.writeByteArrayToFile(file, JSON.toJSONBytes(outputRichBeans, SerializerFeature.WriteNonStringValueAsString));
+        FileUtils.writeByteArrayToFile(file, JSON.toJSONBytes(outputRichBeans));
 
         logger.info("output to file suc. file url is {}, size is {}", file.toURI(), file.length());
     }

@@ -28,7 +28,7 @@ public class RichBean {
     // 回撤 base
     private double retreat;
 
-    @JSONField(serialize = false)
+    @JSONField(serialize = true)
     // 拥有的份额 buy strategy
     private int share;
 
@@ -36,7 +36,7 @@ public class RichBean {
     // 买入份额 buy strategy
     private int buyShare;
 
-    @JSONField(serialize = false)
+    @JSONField(serialize = true)
     // 现金头寸 buy strategy
     private double cash;
 
