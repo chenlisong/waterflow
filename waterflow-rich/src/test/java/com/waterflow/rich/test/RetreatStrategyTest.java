@@ -41,8 +41,8 @@ public class RetreatStrategyTest {
 	public void retreatStrategyTest() throws Exception{
 
 		String endpoint = "oss-cn-beijing.aliyuncs.com";
-		String accessKeyId = "LTAI8JY5sat7IJ6d";
-		String accessKeySecret = "6ucOoXXd6ninY8lEQUfL1fNUgioa9p";
+		String accessKeyId = "";
+		String accessKeySecret = "";
 		String bucketName = "chenlisong";
 
 		retreat.aliyunConfig(accessKeyId, accessKeySecret, endpoint, bucketName);
