@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.waterflow.common.util.HttpUtil;
 import com.waterflow.rich.grab.FundGrab;
 import com.waterflow.rich.init.Application;
-import com.waterflow.rich.strategy.Retreat;
+import com.waterflow.rich.strategy.RetreatStrategy;
 import com.waterflow.rich.strategy.RichBean;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -27,12 +27,12 @@ import java.util.List;
 @SpringBootTest(classes= Application.class)
 @RunWith(SpringRunner.class)
 @ActiveProfiles("online")
-public class RetreatTest {
+public class RetreatStrategyTest {
 
-	private Logger logger = LoggerFactory.getLogger(RetreatTest.class);
+	private Logger logger = LoggerFactory.getLogger(RetreatStrategyTest.class);
 
 	@Autowired
-	Retreat retreat;
+	RetreatStrategy retreat;
 
 	@Autowired
 	FundGrab fundGrab;
@@ -41,8 +41,8 @@ public class RetreatTest {
 	public void retreatStrategyTest() throws Exception{
 
 		String endpoint = "oss-cn-beijing.aliyuncs.com";
-		String accessKeyId = "";
-		String accessKeySecret = "";
+		String accessKeyId = "LTAI8JY5sat7IJ6d";
+		String accessKeySecret = "6ucOoXXd6ninY8lEQUfL1fNUgioa9p";
 		String bucketName = "chenlisong";
 
 		retreat.aliyunConfig(accessKeyId, accessKeySecret, endpoint, bucketName);
@@ -84,7 +84,7 @@ public class RetreatTest {
 	@Test
 	public void downloadTest() {
 		String urlPath = "https://gw.alipayobjects.com/os/bmw-prod/c335e0c4-caa5-4c76-a321-20df96b6e5c8.json";
-		String filePath = Retreat.filePath("000000");
+		String filePath = RetreatStrategy.filePath("000000");
 
 		HttpUtil.download(urlPath, filePath);
 		retreat.upload("000000");

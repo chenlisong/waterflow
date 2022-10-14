@@ -60,7 +60,7 @@ public class GrabTest {
 	@Test
 	public void grabBaiduPicTest() throws Exception{
 
-		String htmlPath = "/Users/chenlisong/Desktop/2.html";
+		String htmlPath = "/Users/chenlisong/Desktop/3.html";
 		String filePath = "/Users/chenlisong/Desktop/pics/";
 
 		Document document = Jsoup.parse(new File(htmlPath));
