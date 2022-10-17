@@ -8,6 +8,7 @@ import com.waterflow.rich.grab.FundGrab;
 import com.waterflow.rich.init.Application;
 import com.waterflow.rich.strategy.RetreatStrategy;
 import com.waterflow.rich.strategy.RichBean;
+import com.waterflow.rich.strategy.RichLoopBean;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -21,8 +22,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest(classes= Application.class)
 @RunWith(SpringRunner.class)
@@ -55,6 +59,39 @@ public class RetreatStrategyTest {
 		retreat.profit();
 		retreat.output2File("001018");
 		retreat.upload("001018");
+	}
+
+	@Test
+	public void loopTest() throws Exception{
+
+		List<RichLoopBean> richLoopBeans = new ArrayList<>();
+
+		for(int i=10; i<180; i+=5) {
+			for(int y=10; y< 180; y+=5) {
+				List<RichBean> richBeans = fundGrab.convertFile2Bean("001018");
+				retreat.initRichBeans(richBeans);
+				retreat.setConfig(i,y);
+				retreat.handleBaseData();
+				retreat.dealStrategy();
+
+				retreat.profit();
+
+				RichLoopBean richLoopBean = new RichLoopBean();
+				richLoopBean.setDiffBuyTime(i);
+				richLoopBean.setDiffSellTime(y);
+				richLoopBean.convert2Loop(richBeans.get(richBeans.size()-1));
+				richLoopBeans.add(richLoopBean);
+
+				logger.info("loop run i is {}, y is {}, market value is {}", i, y, richBeans.get(richBeans.size()-1).getMarketValue());
+			}
+		}
+
+		richLoopBeans = richLoopBeans.stream()
+					.sorted(Comparator.comparing(RichLoopBean::getMarketValue).reversed())
+						.limit(10)
+							.collect(Collectors.toList());
+
+		logger.info("rich loop bean data is {}", JSON.toJSONString(richLoopBeans));
 	}
 
 	@Test

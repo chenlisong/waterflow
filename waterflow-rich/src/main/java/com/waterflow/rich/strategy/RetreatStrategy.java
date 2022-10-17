@@ -1,13 +1,13 @@
 package com.waterflow.rich.strategy;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.math.RoundingMode;
+
 
 /**
  * 基于回撤的算法
@@ -17,76 +17,56 @@ public class RetreatStrategy extends BaseStrategy{
 
     Logger logger = LoggerFactory.getLogger(RetreatStrategy.class);
 
+    long buyDiffTime = 0L;
+
+    long sellDiffTime = 0L;
+
     /**
      * 买入：如果回撤到达最大的1/2，买入1/10，距离上次买入最小间隔10天
      * 卖出：如果触摸到净值最高点，卖出1/10，距离上次卖出最小间隔10天
      */
     @Override
-    public void dealStrategy() {
-        long diffTime = 1000 * 60 * 60 * 24 * 10;
-        RichBean firstRichBean = richBeans.get(0);
+    public int calBuyShare(RichBean richBean, RichBean pre) {
+        int buyShare = 0;
 
-        Date lastBuyTime = firstRichBean.getTime();
-        Date lastSellTime = firstRichBean.getTime();
-        double maxRetreat = 0.0;
-        double maxPrice = 0.0;
+        double curPrice = pre.getPrice();
+        double curCash = pre.getCash();
+        int curShare = pre.getShare();
 
-        richLoop: for(RichBean richBean: richBeans) {
-            // 定义昨天的数据
-            if(pre == null) {
-                deal(richBean, 0);
-                continue richLoop;
-            }
+        if(richBean.getRetreat() >= maxRetreat * 0.5
+            && richBean.getTime().getTime() - lastBuyTime.getTime() > buyDiffTime) {
 
-            // 记录数据
-            int buyShare = 0;
+            buyShare = (int)Math.floor((curShare * curPrice + curCash) * 0.1 / curPrice);
 
-            // 跳过前3年，不买也不卖
-            if(DateUtils.addMonths(firstRichBean.getTime(), skipTime).getTime() > richBean.getTime().getTime()) {
-                deal(richBean, buyShare);
-                continue richLoop;
-            }
+            // 买入的不能超出现金份额
+            int maxBuyShare = NumberUtils.toScaledBigDecimal(curCash / curPrice, NumberUtils.INTEGER_ONE, RoundingMode.HALF_DOWN).intValue();
 
-            maxRetreat = NumberUtils.max(maxRetreat, richBean.getRetreat());
-
-            if(richBean.getRetreat() >= maxRetreat * 0.5
-                && richBean.getTime().getTime() - lastBuyTime.getTime() > diffTime) {
-
-                double curPrice = richBean.getPrice();
-                double curCash = pre.getCash();
-                int curShare = pre.getShare();
-
-                buyShare = (int)Math.floor((curShare * curPrice + curCash) * 0.1 / curPrice);
-            }
-
-            if(richBean.getRetreat() < maxRetreat * 0.5 && richBean.getPrice() >= maxPrice
-                && richBean.getTime().getTime() - lastSellTime.getTime() > diffTime) {
-                double curPrice = richBean.getPrice();
-                double curCash = pre.getCash();
-                int curShare = pre.getShare();
-                buyShare = (int)Math.floor((curShare * curPrice + curCash) * 0.1 / curPrice) * -1;
-            }
-
-            deal(richBean, buyShare);
-
-            // 恢复游标数据
-            if(buyShare > 0) {
-                lastBuyTime = richBean.getTime();
-            }
-            if(buyShare < 0) {
-                lastSellTime = richBean.getTime();
-            }
-
-            maxPrice = NumberUtils.max(maxPrice, richBean.getPrice());
+            buyShare = NumberUtils.min(buyShare, maxBuyShare);
         }
+
+        if(richBean.getRetreat() < maxRetreat * 0.5 && richBean.getPrice() >= maxPrice
+                && richBean.getTime().getTime() - lastSellTime.getTime() > sellDiffTime) {
+            buyShare = (int)Math.floor((curShare * curPrice + curCash) * 0.1 / curPrice) * -1;
+
+            // 卖出的不能超出拥有的
+            buyShare = NumberUtils.max(buyShare, curShare * -1);
+        }
+
+        if(buyShare > 0) {
+            lastBuyTime = richBean.getTime();
+        }else if(buyShare < 0) {
+            lastSellTime = richBean.getTime();
+        }
+
+        return buyShare;
     }
 
     @Override
-    public void deal(RichBean richBean, int buyShare) {
+    public void deal4Debug(RichBean richBean, RichBean pre, int buyShare) {
         // code for debug
         try{
-            long begin = DateUtils.parseDate("2022-01-19", "yyyy-MM-dd").getTime();
-            long end = DateUtils.parseDate("2022-01-22", "yyyy-MM-dd").getTime();
+            long begin = DateUtils.parseDate("2019-08-23", "yyyy-MM-dd").getTime();
+            long end = DateUtils.parseDate("2019-08-30", "yyyy-MM-dd").getTime();
 
             if(richBean.getTime().getTime() > begin && richBean.getTime().getTime() < end) {
                 logger.info("deal rich bean is {}", richBean.toString());
@@ -94,48 +74,16 @@ public class RetreatStrategy extends BaseStrategy{
         }catch (Exception e) {
             logger.error("error.", e);
         }
-
-        if(pre == null) {
-            richBean.setCash(initCash);
-            richBean.setShare(0);
-            richBean.setBuyShare(0);
-            richBean.setMarketValue(initCash);
-        }else {
-            richBean.setCash(pre.getCash());
-            richBean.setShare(pre.getShare());
-            richBean.setBuyShare(pre.getBuyShare());
-            double marketValue = richBean.getShare() * richBean.getPrice() + richBean.getCash();
-            richBean.setMarketValue(marketValue);
-        }
-
-        if(pre != richBean && buyShare != 0) {
-
-            // 买入的成本
-            double buyPrice = buyShare * richBean.getPrice();
-
-            // 买入时现金要足够，卖出时share要足够
-            if(pre.getCash() - buyPrice < 0 || pre.getShare() + buyShare < 0) {
-                logger.info("cash not enough, time is {}, buyShare is {}. buyPrice is {}"
-                    , richBean.getTime(), buyShare, buyPrice);
-                return;
-            }
-
-            richBean.setCash(pre.getCash() - buyPrice);
-            richBean.setShare(pre.getShare() + buyShare);
-            richBean.setBuyShare(buyShare);
-            richBean.setMarketValue(richBean.getPrice() * richBean.getShare() + richBean.getCash());
-
-            if(buyShare > 0) {
-                logger.info("deal suc, buy info: time is {}, share is {}, own share is {}, price is {}, cash is {}, market value is {}"
-                    , DateFormatUtils.format(richBean.getTime(), "yyyyMMdd"), buyShare, richBean.getShare(), richBean.getPrice(), richBean.getCash(), richBean.getMarketValue());
-            }
-            if(buyShare < 0) {
-                logger.info("deal suc, sell info: time is {}, share is {}, own share is {}, price is {}, cash is {}, market value is {}"
-                        , DateFormatUtils.format(richBean.getTime(), "yyyyMMdd"), buyShare, richBean.getShare(), richBean.getPrice(), richBean.getCash(), richBean.getMarketValue());
-            }
-        }
-
-        pre = richBean;
     }
 
+    @Override
+    public void initConfig() {
+        this.buyDiffTime = 1000L * 60 * 60 * 24 * 15;
+        this.sellDiffTime = 1000L * 60 * 60 * 24 * 30 * 2;
+    }
+
+    public void setConfig(int buyDiffDay, int sellDiffDay) {
+        this.buyDiffTime = 1000L * 60 * 60 * 24 * buyDiffDay;
+        this.sellDiffTime = 1000L * 60 * 60 * 24 * sellDiffDay;
+    }
 }

@@ -20,11 +20,11 @@ public class RichBean {
     @JSONField(name="price", ordinal = 2, deserializeUsing = ToStringSerializer.class)
     private double price;
 
-    @JSONField(serialize = false)
-    // 昨日回撤 base
-    private double yesterdayRetreat;
+//    @JSONField(serialize = true)
+//    // 昨日回撤 base
+//    private double yesterdayRetreat;
 
-    @JSONField(serialize = false)
+    @JSONField(serialize = true)
     // 回撤 base
     private double retreat;
 
@@ -36,7 +36,7 @@ public class RichBean {
     // 买入份额 buy strategy
     private int buyShare;
 
-    @JSONField(serialize = true)
+    @JSONField(serialize = true, ordinal = 5)
     // 现金头寸 buy strategy
     private double cash;
 
@@ -68,13 +68,13 @@ public class RichBean {
         this.price = price;
     }
 
-    public double getYesterdayRetreat() {
-        return yesterdayRetreat;
-    }
-
-    public void setYesterdayRetreat(double yesterdayRetreat) {
-        this.yesterdayRetreat = yesterdayRetreat;
-    }
+//    public double getYesterdayRetreat() {
+//        return yesterdayRetreat;
+//    }
+//
+//    public void setYesterdayRetreat(double yesterdayRetreat) {
+//        this.yesterdayRetreat = yesterdayRetreat;
+//    }
 
     public double getCash() {
         return cash;
@@ -129,7 +129,7 @@ public class RichBean {
         return "RichBean{" +
                 "time=" + time +
                 ", price=" + price +
-                ", yesterdayRetreat=" + yesterdayRetreat +
+//                ", yesterdayRetreat=" + yesterdayRetreat +
                 ", retreat=" + retreat +
                 ", share=" + share +
                 ", buyShare=" + buyShare +

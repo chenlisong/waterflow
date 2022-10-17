@@ -30,13 +30,19 @@ public abstract class BaseStrategy {
     protected String bucketName = "";
 
     // 要跳过计算的月份
-    int skipTime = 12 * 3;
+    int skipTime = 12 * 2;
 
     protected List<RichBean> richBeans;
 
-    protected RichBean pre = null;
+    // 初始化现金
+    protected double initCash = 10 * 10000.0d;
 
-    protected double initCash = 10 * 1000.0d;
+    RichBean firstRichBean = null;
+
+    Date lastBuyTime = null;
+    Date lastSellTime = null;
+    double maxRetreat = 0.0;
+    double maxPrice = 0.0;
 
     /**
      * 处理排序
@@ -54,6 +60,15 @@ public abstract class BaseStrategy {
         logger.info("init rich bean data. size is {}, first is {}, last is {}",
                 richBeans.size(), richBeans.get(0).toSimpleString(),
                 richBeans.get(richBeans.size()-1).toSimpleString());
+
+        // init data
+        firstRichBean = richBeans.get(0);
+        lastBuyTime = firstRichBean.getTime();
+        lastSellTime = firstRichBean.getTime();
+        maxPrice = 0.0;
+        maxRetreat = 0.0;
+
+        initConfig();
     }
 
     /**
@@ -76,10 +91,6 @@ public abstract class BaseStrategy {
                 continue richLoop;
             }
 
-            // 昨日回撤
-            double yesterdayRetreat = (richBean.getPrice() - pre.getPrice()) / pre.getPrice() * 100;
-            richBean.setYesterdayRetreat(yesterdayRetreat);
-
             maxPrice = NumberUtils.max(maxPrice, richBean.getPrice());
 
             // 当前回撤
@@ -88,6 +99,92 @@ public abstract class BaseStrategy {
 
             pre = richBean;
         }
+    }
+
+    public void dealStrategy() {
+        RichBean pre = firstRichBean;
+        richLoop: for(RichBean richBean: richBeans) {
+            // 记录数据
+            int buyShare = 0;
+
+            // 定义昨天的数据
+            if(pre == firstRichBean) {
+                deal(richBean, pre, buyShare);
+                pre = richBean;
+                continue richLoop;
+            }
+
+            // 跳过前3年，不买也不卖
+            if(DateUtils.addMonths(firstRichBean.getTime(), skipTime).getTime() > richBean.getTime().getTime()) {
+                deal(richBean, pre, buyShare);
+                pre = richBean;
+                continue richLoop;
+            }
+
+            maxRetreat = NumberUtils.max(maxRetreat, richBean.getRetreat());
+
+            buyShare = calBuyShare(richBean, pre);
+
+            deal(richBean, pre, buyShare);
+
+            // 恢复游标数据
+            if(buyShare > 0) {
+                lastBuyTime = richBean.getTime();
+            }
+            if(buyShare < 0) {
+                lastSellTime = richBean.getTime();
+            }
+
+            maxPrice = NumberUtils.max(maxPrice, richBean.getPrice());
+            pre = richBean;
+        }
+    }
+
+    public void deal(RichBean richBean, RichBean pre, int buyShare) {
+        deal4Debug(richBean, pre, buyShare);
+
+        if(pre == firstRichBean) {
+            richBean.setCash(initCash);
+            richBean.setShare(0);
+            richBean.setBuyShare(0);
+            richBean.setMarketValue(initCash);
+        }else {
+            richBean.setCash(pre.getCash());
+            richBean.setShare(pre.getShare());
+            richBean.setBuyShare(buyShare);
+            double marketValue = richBean.getShare() * richBean.getPrice() + richBean.getCash();
+            richBean.setMarketValue(marketValue);
+        }
+
+        if(pre != richBean && buyShare != 0) {
+
+            // 买入的成本
+            double buyPrice = buyShare * richBean.getPrice();
+
+            // 买入时现金要足够，卖出时share要足够
+            if(pre.getCash() - buyPrice < 0 || pre.getShare() + buyShare < 0) {
+                logger.info("cash or share not enough, time is {}, buyShare is {}. buyPrice is {}, share is {}, cash is {}"
+                        , richBean.getTime(), buyShare, buyPrice, richBean.getShare(), richBean.getCash());
+                buyShare = 0;
+                buyPrice = 0.0;
+            }
+
+            richBean.setCash(pre.getCash() - buyPrice);
+            richBean.setShare(pre.getShare() + buyShare);
+            richBean.setBuyShare(buyShare);
+            richBean.setMarketValue(richBean.getPrice() * richBean.getShare() + richBean.getCash());
+
+            if(buyShare > 0) {
+                logger.info("deal suc, buy info: time is {}, share is {}, own share is {}, price is {}, cash is {}, market value is {}"
+                        , DateFormatUtils.format(richBean.getTime(), "yyyyMMdd"), buyShare, richBean.getShare(), richBean.getPrice(), richBean.getCash(), richBean.getMarketValue());
+            }
+            if(buyShare < 0) {
+                logger.info("deal suc, sell info: time is {}, share is {}, own share is {}, price is {}, cash is {}, market value is {}"
+                        , DateFormatUtils.format(richBean.getTime(), "yyyyMMdd"), buyShare, richBean.getShare(), richBean.getPrice(), richBean.getCash(), richBean.getMarketValue());
+            }
+        }
+
+//        pre = richBean;
     }
 
     public void profit() {
@@ -105,8 +202,12 @@ public abstract class BaseStrategy {
                 .filter(richBean -> {
                     double newCash = NumberUtils.toScaledBigDecimal(richBean.getCash(), NumberUtils.INTEGER_ONE, RoundingMode.HALF_UP).doubleValue();
                     double newMarketValue = NumberUtils.toScaledBigDecimal(richBean.getMarketValue(), NumberUtils.INTEGER_ONE, RoundingMode.HALF_UP).doubleValue();
+                    double newRetreat = NumberUtils.toScaledBigDecimal(richBean.getRetreat(), NumberUtils.INTEGER_ONE, RoundingMode.HALF_UP).doubleValue() * -1;
+                    double newPrice = NumberUtils.toScaledBigDecimal(richBean.getPrice(), NumberUtils.INTEGER_ONE, RoundingMode.HALF_UP).doubleValue();
                     richBean.setCash(newCash);
                     richBean.setMarketValue(newMarketValue);
+                    richBean.setRetreat(newRetreat);
+                    richBean.setPrice(newPrice);
                     return richBean.getTime().getTime() - date.getTime() > 0;
                 })
                 .collect(Collectors.toList());
@@ -164,8 +265,10 @@ public abstract class BaseStrategy {
         return filePath;
     }
 
-    public abstract void dealStrategy() ;
+    public abstract void deal4Debug(RichBean richBean, RichBean pre, int buyShare);
 
-    public abstract void deal(RichBean richBean, int buyShare);
+    public abstract int calBuyShare(RichBean richBean, RichBean pre);
+
+    public abstract void initConfig();
 
 }
