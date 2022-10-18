@@ -82,8 +82,9 @@ public class RetreatStrategy extends BaseStrategy{
         this.sellDiffTime = 1000L * 60 * 60 * 24 * 30 * 2;
     }
 
-    public void setConfig(int buyDiffDay, int sellDiffDay) {
+    public void setConfig(int buyDiffDay, int sellDiffDay, int skipYear) {
         this.buyDiffTime = 1000L * 60 * 60 * 24 * buyDiffDay;
         this.sellDiffTime = 1000L * 60 * 60 * 24 * sellDiffDay;
+        this.skipTime = 12 * skipYear;
     }
 }
