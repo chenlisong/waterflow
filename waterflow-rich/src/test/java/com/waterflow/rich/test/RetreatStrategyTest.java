@@ -55,14 +55,17 @@ public class RetreatStrategyTest {
 
 		retreat.aliyunConfig(accessKeyId, accessKeySecret, endpoint, bucketName);
 
-		List<RichBean> richBeans = fundGrab.convertFile2Bean("001018");
+		String fundCode = "002943";
+
+		List<RichBean> richBeans = fundGrab.convertFile2Bean(fundCode);
+		retreat.setConfig(10, 140, 5);
 		retreat.initRichBeans(richBeans);
 		retreat.handleBaseData();
 		retreat.dealStrategy();
 
 		retreat.profit();
-		retreat.output2File("001018");
-		retreat.upload("001018");
+		retreat.output2File(fundCode);
+		retreat.upload(fundCode);
 	}
 
 
@@ -72,12 +75,14 @@ public class RetreatStrategyTest {
 
 		UploadUtil uploadUtil = UploadUtil.instance();
 		uploadUtil.aliyunConfig(accessKeyId,accessKeySecret, endpoint,bucketName);
+		String fundCode = "161005";
 
-		for(int skip=1;skip<6;skip++) {
+		for(int skip=11;skip<16;skip++) {
+//			RichBean richBean = fundGrab.convertFile2Bean(fundCode).get(0);
 			List<RichLoopBean> richLoopBeans = new ArrayList<>();
-			for (int i = 10; i < 180; i += 5) {
-				for (int y = 10; y < 180; y += 5) {
-					List<RichBean> richBeans = fundGrab.convertFile2Bean("001018");
+			for (int i = 10; i < 180; i += 10) {
+				for (int y = 10; y < 180; y += 10) {
+					List<RichBean> richBeans = fundGrab.convertFile2Bean(fundCode);
 					retreat.initRichBeans(richBeans);
 					retreat.setConfig(i, y, skip);
 					retreat.handleBaseData();
@@ -102,7 +107,7 @@ public class RetreatStrategyTest {
 			SimplePropertyPreFilter richLoopbeanFilter = new SimplePropertyPreFilter(RichLoopBean.class
 						, "marketValue", "diffBuyTime", "diffSellTime");
 
-			String objectName = "rich/skip_"+skip+".json";
+			String objectName = "rich/skip_"+fundCode+"_"+skip+".json";
 			String filePath = "/Users/chenlisong/Downloads/" + objectName;
 			FileUtils.writeByteArrayToFile(new File(filePath), JSON.toJSONBytes(richLoopBeans, richLoopbeanFilter));
 
@@ -115,12 +120,13 @@ public class RetreatStrategyTest {
 	public void loopTest() throws Exception{
 
 		List<RichLoopBean> richLoopBeans = new ArrayList<>();
+		String fundCode = "002943";
 
 		for (int i = 10; i < 180; i += 5) {
 			for (int y = 10; y < 180; y += 5) {
-				List<RichBean> richBeans = fundGrab.convertFile2Bean("001018");
+				List<RichBean> richBeans = fundGrab.convertFile2Bean(fundCode);
 				retreat.initRichBeans(richBeans);
-				retreat.setConfig(i, y, 3);
+				retreat.setConfig(i, y, 5);
 				retreat.handleBaseData();
 				retreat.dealStrategy();
 

@@ -38,7 +38,8 @@ public class GrabTest {
 
 	@Test
 	public void fundDownloadTest(){
-		fundGrab.downloadFundFile("001018");
+		fundGrab.downloadFundFile("161005");
+		fundGrab.downloadFundFile("002943");
 	}
 
 	@Test
