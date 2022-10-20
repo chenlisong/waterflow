@@ -44,6 +44,8 @@ public class RichBean {
     // 市值
     private double marketValue;
 
+    private RichBean pre;
+
     public RichBean() {
     }
 
@@ -122,6 +124,14 @@ public class RichBean {
 
     public void setTimeFormat(String timeFormat) {
         this.timeFormat = timeFormat;
+    }
+
+    public RichBean getPre() {
+        return pre;
+    }
+
+    public void setPre(RichBean pre) {
+        this.pre = pre;
     }
 
     @Override

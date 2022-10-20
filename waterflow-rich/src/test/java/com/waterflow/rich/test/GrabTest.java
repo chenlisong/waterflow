@@ -38,15 +38,16 @@ public class GrabTest {
 
 	@Test
 	public void fundDownloadTest(){
-		fundGrab.downloadFundFile("161005");
-		fundGrab.downloadFundFile("002943");
+//		fundGrab.downloadFundFile("161005");
+//		fundGrab.downloadFundFile("002943");
+		fundGrab.downloadFundFile("519300");
 	}
 
 	@Test
 	public void fundLoadTest(){
 
 		try {
-			fundGrab.convertFile2Bean("001018");
+			fundGrab.convertFile2Bean("519300");
 		}catch (Exception e) {
 			logger.error("error.", e);
 		}

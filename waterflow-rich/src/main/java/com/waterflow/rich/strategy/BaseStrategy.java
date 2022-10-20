@@ -80,6 +80,7 @@ public abstract class BaseStrategy {
         double maxPrice = 0.0;
 
         richLoop: for(RichBean richBean : richBeans) {
+            richBean.setPre(pre);
 
             // format time to string
             String timeFormat = DateFormatUtils.format(richBean.getTime(), "M/d/yyyy");
