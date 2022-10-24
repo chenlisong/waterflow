@@ -39,7 +39,7 @@ public class StdStrategy extends BaseStrategy{
 
         List<StdRichBean> stdRichBeans = new ArrayList<>();
         for(int i=0; i<richBeans.size(); i++) {
-            logger.info("progress is {} / {}", i, richBeans.size());
+//            logger.info("progress is {} / {}", i, richBeans.size());
 
             RichBean richBean = richBeans.get(i);
             StdRichBean stdRichBean = new StdRichBean();
