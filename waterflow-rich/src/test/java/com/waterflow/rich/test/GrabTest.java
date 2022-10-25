@@ -76,5 +76,10 @@ public class GrabTest {
 		}
 	}
 
+	@Test
+	public void autoGrabFundDataTest() throws Exception{
+		fundGrab.autoGrabFundData("001018");
+	}
+
 }
 

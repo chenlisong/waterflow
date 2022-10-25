@@ -25,3 +25,12 @@ docker run -itd --name mysql-test -p 3306:3306 mysql
 docker exec -it mysql-test /bin/bash
 sh-4.4# mysql -h localhost -u root -p
 
+other info
+    数据抓取
+        股票数据：https://quotes.money.163.com/service/chddata.html?code=0601398&start=20200720&end=20250508
+        基金数据：http://fund.eastmoney.com/pingzhongdata/001018.js
+
+    参考文章地址
+    1.https://javaforall.cn/186361.html
+    2.获取股票历史数据（网易163行情接口）[通俗易懂]：https://cloud.tencent.com/developer/article/2063536?from=15425
+    3.AkShare-基金数据-公募基金数据：https://cloud.tencent.com/developer/article/1603960

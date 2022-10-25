@@ -57,7 +57,7 @@ public class StdTest {
 				UploadUtil uploadUtil = UploadUtil.instance();
 				uploadUtil.aliyunConfig(accessKeyId,accessKeySecret, endpoint,bucketName);
 
-				List<RichBean> richBeans = fundGrab.convertFile2Bean(fundCode);
+				List<RichBean> richBeans = fundGrab.autoGrabFundData(fundCode);
 				retreat.initRichBeans(richBeans);
 				retreat.handleBaseData();
 
