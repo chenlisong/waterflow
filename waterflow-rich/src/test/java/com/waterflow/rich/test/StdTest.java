@@ -6,7 +6,9 @@ import com.alibaba.fastjson.serializer.ValueFilter;
 import com.waterflow.common.util.UploadUtil;
 import com.waterflow.rich.grab.FundGrab;
 import com.waterflow.rich.init.Application;
+import com.waterflow.rich.service.FtlService;
 import com.waterflow.rich.strategy.*;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.junit.Test;
@@ -18,11 +20,26 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.awt.datatransfer.FlavorTable;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.InetAddress;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 @SpringBootTest(classes= Application.class)
 @RunWith(SpringRunner.class)
@@ -44,6 +61,60 @@ public class StdTest {
 	String accessKeyId = "";
 	String accessKeySecret = "";
 	String bucketName = "chenlisong";
+
+	@Test
+	public void hund() throws Exception {
+
+		double money = 12;
+
+		int year = 0;
+		while(money < 100) {
+			money = money * 1.1 + 12;
+			year++;
+		}
+
+		logger.info("year is {}", year);
+
+	}
+
+	@Test
+	public void convertHtml2Png2() throws Exception {
+
+		// 控制浏览器打开网页，仅适用于JdK1.6及以上版本
+		Desktop.getDesktop().browse(new URL("/Users/chenlisong/Documents/code/files/Archive/Line-20221025的副本.html").toURI());
+		Robot robot = new Robot();
+		// 延迟一秒
+		robot.delay(1000);
+		// 获取屏幕宽度和高度
+		Dimension d = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		int width = (int) d.getWidth();
+		int height = (int) d.getHeight();
+		// 最大化浏览器
+		robot.keyRelease(KeyEvent.VK_F11);
+		robot.delay(3000);
+		// 对屏幕进行截图
+		Image image = robot.createScreenCapture(new Rectangle(0, 0, width, height));
+		// 通过图形绘制工具类将截图保存
+		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics g = img.createGraphics();
+		g.drawImage(image, 0, 0, width, height, null);
+		// 保存图片
+		ImageIO.write(img, "jpg", new File("a1.jpg"));
+		System.out.println("done!");
+
+	}
+
+	@Test
+	public void convertHtml2Png() throws Exception {
+
+//		FtlService.renderHtml2Image("file:///Users/chenlisong/Documents/code/app.2022-10-17.html");
+//		FtlService.renderHtml2Image("file:///Users/chenlisong/Documents/code/files/Archive/Line-20221025的副本.html");
+//		FtlService.renderHtml2Image("http://localhost:2224/a2");
+
+//		FtlService.renderHtml2Image("https://chenlisong.oss-cn-beijing.aliyuncs.com/rich/Line-20221025%E7%9A%84%E5%89%AF%E6%9C%AC.html");
+//		FtlService.transferHtml2Image("/Users/chenlisong/Documents/code/app.2022-10-17.html", "result.png", 600, 700);
+//		FtlService.transferHtml2Image("/Users/chenlisong/Documents/code/files/Archive/Line-20221025的副本.html", "result.png", 600, 700);
+	}
 
 	@Test
 	public void stdExec() throws Exception{
@@ -87,6 +158,7 @@ public class StdTest {
 			}
 		}
 	}
+
 
 	/**
 	 * 标准差计算

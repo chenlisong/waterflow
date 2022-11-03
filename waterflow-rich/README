@@ -30,7 +30,18 @@ other info
         股票数据：https://quotes.money.163.com/service/chddata.html?code=0601398&start=20200720&end=20250508
         基金数据：http://fund.eastmoney.com/pingzhongdata/001018.js
 
+    - 实时涨跌：https://fundgz.1234567.com.cn/js/007345.js?v=20200908175500
+    - 基金列表：http://fund.eastmoney.com/js/fundcode_search.js
+    - 基金详情：http://fund.eastmoney.com/pingzhongdata/007345.js?v=20200908175500
+    - 基金公司列表：http://fund.eastmoney.com/js/jjjz_gs.js
+    - 基金净值数据：http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=007345&page=1&per=20&sdate=2020-09-01&edate=2020-09-18
+    - 基金增幅排名：http://fund.eastmoney.com/data/rankhandler.aspx?op=ph&dt=kf&ft=gp&rs=&gs=0&sc=zzf&st=desc&sd=2016-03-29&ed=2017-03-29&qdii=&tabSubtype=,,,,,&pi=1&pn=50&dx=1&v=0.6370068000914493
+
+    - 股票和指数F10数据：http://quotes.money.163.com/service/chddata.html?code=0000001&start=19901219&end=20150911&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;VOTURNOVER;VATURNOVER
+
+
     参考文章地址
     1.https://javaforall.cn/186361.html
     2.获取股票历史数据（网易163行情接口）[通俗易懂]：https://cloud.tencent.com/developer/article/2063536?from=15425
     3.AkShare-基金数据-公募基金数据：https://cloud.tencent.com/developer/article/1603960
+    4.通过网易财经接口获取股票和指数的历史数据：https://blog.csdn.net/u014595019/article/details/48445223
