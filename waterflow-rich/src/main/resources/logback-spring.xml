@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 
-    <springProperty scope="context" name="LOG_HOME" source="logback.dir"/>
+    <springProperty scope="context" name="LOG_HOME" source="project.file.path"/>
     <springProperty scope="context" name="PROJECT_NAME" source="spring.application.name"/>
 
     <!-- 定义日志组件上下文路径名，用于区分不同应用程序的记录 -->
@@ -21,7 +21,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--日志文件输出的文件名，我们使用的是路径${LOG_HOME}+文件名（文件名里面加了日期） -->
-            <FileNamePattern>${LOG_HOME}/app.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/logs/app.%d{yyyy-MM-dd}.log</FileNamePattern>
             <!--日志文件保留天数 -->
             <MaxHistory>30</MaxHistory>
         </rollingPolicy>
@@ -39,7 +39,7 @@
     <appender name="HtmlFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--日志文件输出的文件名 -->
-            <FileNamePattern>${LOG_HOME}/app.%d{yyyy-MM-dd}.html</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/logs/app.%d{yyyy-MM-dd}.html</FileNamePattern>
             <!--日志文件保留天数 -->
             <MaxHistory>30</MaxHistory>
         </rollingPolicy>
@@ -68,7 +68,7 @@
                 <pattern>%p%d%msg%M%F{32}%L</pattern>
             </layout>
         </encoder>
-        <file>${LOG_HOME}/WARN-log.html</file>
+        <file>${LOG_HOME}/logs/WARN-log.html</file>
     </appender>
 
     <!-- 根日志输出级别 -->

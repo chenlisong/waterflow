@@ -28,12 +28,12 @@ public class FundGrab {
 
     static String fundUrl = "http://fund.eastmoney.com/pingzhongdata/%s.js";
 
-    @Value("${file.path.fund}")
-    String filePath;
+    @Value("${project.file.path}")
+    String projectFilePath;
 
     public List<RichBean> autoGrabFundData(String fundCode) throws Exception{
         //1. 加载本地数据，汇集成基础数据
-        String dataFilePath = filePath + "/data/" + fundCode + ".js";
+        String dataFilePath = projectFilePath + "/fund/data/" + fundCode + ".js";
         List<RichBean> richBeans = convertJsCode2RichBean(dataFilePath);
         richBeans = richBeans.stream()
                 .sorted((p1, p2) -> p1.getTime().compareTo(p2.getTime()))
@@ -42,7 +42,7 @@ public class FundGrab {
         Date yesDay = DateUtils.addDays(new Date(), -1);
 
         if(richBeans == null || richBeans.size() <= 0
-                    || richBeans.get(richBeans.size()-1).getTime().getTime() > yesDay.getTime()) {
+                    || richBeans.get(richBeans.size()-1).getTime().getTime() < yesDay.getTime()) {
 
             String downloadUrl = String.format(fundUrl, fundCode);
             HttpUtil.download(downloadUrl, dataFilePath);

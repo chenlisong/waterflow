@@ -1,14 +1,11 @@
 package com.waterflow.rich.test;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.alibaba.fastjson.serializer.ValueFilter;
 import com.waterflow.common.util.UploadUtil;
 import com.waterflow.rich.grab.FundGrab;
 import com.waterflow.rich.init.Application;
-import com.waterflow.rich.service.FtlService;
 import com.waterflow.rich.strategy.*;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.junit.Test;
@@ -20,15 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import java.awt.datatransfer.FlavorTable;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.InetAddress;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +27,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 @SpringBootTest(classes= Application.class)
@@ -58,8 +46,8 @@ public class StdTest {
 	StdStrategy stdStrategy;
 
 	String endpoint = "oss-cn-beijing.aliyuncs.com";
-	String accessKeyId = "";
-	String accessKeySecret = "";
+	String accessKeyId = "LTAI8JY5sat7IJ6d";
+	String accessKeySecret = "6ucOoXXd6ninY8lEQUfL1fNUgioa9p";
 	String bucketName = "chenlisong";
 
 	@Test
@@ -118,12 +106,14 @@ public class StdTest {
 
 	@Test
 	public void stdExec() throws Exception{
-//		String[] fundCodes = new String[] {"001018", "161005"};
+//		String[] fundCodes = new String[] {"/**/001018", "161005"};
 
-		String[] fundCodes = new String[] {"519300"};
+		String[] fundCodes = new String[] {"510310"};
 		for(String fundCode: fundCodes) {
-			for(int year=1; year<5;year++) {
-				long diffTime = 1000L * 60 * 60 * 24 * 365 * year;
+			for(int month=1; month<13;month++) {
+				long diffTime = 1000L * 60 * 60 * 24 * 30 * month;
+
+				month++;
 
 				UploadUtil uploadUtil = UploadUtil.instance();
 				uploadUtil.aliyunConfig(accessKeyId,accessKeySecret, endpoint,bucketName);
@@ -149,7 +139,7 @@ public class StdTest {
 					}
 				};
 
-				String objectName = "rich/std_"+year + "_" + fundCode+".json";
+				String objectName = "rich/std_"+month + "_" + fundCode+".json";
 				String filePath = "/Users/chenlisong/Downloads/" + objectName;
 				FileUtils.writeByteArrayToFile(new File(filePath), JSON.toJSONBytes(stdRichBeans, doubleFilter));
 
