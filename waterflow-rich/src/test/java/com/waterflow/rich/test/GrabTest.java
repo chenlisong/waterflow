@@ -1,7 +1,6 @@
 package com.waterflow.rich.test;
 
 import com.waterflow.common.util.HttpUtil;
-import com.waterflow.rich.dao.TestBeanRepository;
 import com.waterflow.rich.grab.FundGrab;
 import com.waterflow.rich.grab.QuoteGrab;
 import com.waterflow.rich.init.Application;
@@ -27,8 +26,8 @@ public class GrabTest {
 
 	private Logger logger = LoggerFactory.getLogger(GrabTest.class);
 
-	@Autowired
-	TestBeanRepository testBeanService;
+//	@Autowired
+//	TestBeanRepository testBeanService;
 
 	@Autowired
 	FundGrab fundGrab;

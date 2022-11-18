@@ -1,6 +1,5 @@
 package com.waterflow.rich.control;
 
-import com.waterflow.rich.dao.TestBeanRepository;
 import com.waterflow.rich.service.HelloService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +19,10 @@ public class HelloControl {
     @Resource
     HelloService helloService;
 
-    @Resource
-    TestBeanRepository testBeanRepository;
-
     @GetMapping("/hello")
     public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
         String dist = helloService.hello(name);
         logger.info("hello control, name is " + name);
-        logger.info("test bean data is {}", testBeanRepository.findById(1L).get().getTitle());
         return dist;
     }
 

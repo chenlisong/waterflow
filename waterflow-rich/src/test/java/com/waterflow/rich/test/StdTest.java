@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -44,6 +45,8 @@ public class StdTest {
 
 	@Autowired
 	StdStrategy stdStrategy;
+	@Value("${project.file.path}")
+	String projectFilePath;
 
 	String endpoint = "oss-cn-beijing.aliyuncs.com";
 	String accessKeyId = "";
@@ -140,7 +143,7 @@ public class StdTest {
 				};
 
 				String objectName = "rich/std_"+month + "_" + fundCode+".json";
-				String filePath = "/Users/chenlisong/Downloads/" + objectName;
+				String filePath = projectFilePath + "/" + objectName;
 				FileUtils.writeByteArrayToFile(new File(filePath), JSON.toJSONBytes(stdRichBeans, doubleFilter));
 
 				logger.info("rich loop bean data is {}", JSON.toJSONString(stdRichBeans.stream().limit(10).collect(Collectors.toList())));
