@@ -74,6 +74,7 @@ public class StdStrategy extends BaseStrategy{
             stdRichBean.setP2sd(average + std + std);
             stdRichBean.setP1fsd(average - std);
             stdRichBean.setP2fsd(average - std - std);
+            stdRichBean.setTime(richBean.getTime());
 
 //            stdRichBean.setP1sd(NumberUtils.toScaledBigDecimal(curPrice + std, Integer.valueOf(4), RoundingMode.HALF_UP).doubleValue());
 //            stdRichBean.setP2sd(NumberUtils.toScaledBigDecimal(curPrice + std + std, Integer.valueOf(4), RoundingMode.HALF_UP).doubleValue());

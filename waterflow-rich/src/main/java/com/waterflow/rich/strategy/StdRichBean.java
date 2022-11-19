@@ -1,6 +1,7 @@
 package com.waterflow.rich.strategy;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class StdRichBean {
 
@@ -17,6 +18,16 @@ public class StdRichBean {
     private double p2fsd;
 
     private BigDecimal x;
+
+    private Date time;
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
 
     public String getDate() {
         return date;

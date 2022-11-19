@@ -7,6 +7,7 @@ import com.waterflow.rich.strategy.RichBean;
 import com.waterflow.rich.strategy.StdRichBean;
 import com.waterflow.rich.strategy.StdStrategy;
 import com.waterflow.rich.util.MetaAntvUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/fund")
@@ -46,7 +49,12 @@ public class FundController {
             retreat.handleBaseData();
 
             long diffTime = 1000L * 60 * 60 * 24 * 30 * month;
+
+            Date begin = DateUtils.addYears(new Date(), -5);
             List<StdRichBean> stdRichBeans = stdStrategy.convert2Std(richBeans, diffTime);
+            stdRichBeans = stdRichBeans.stream()
+                    .filter(bean -> bean.getTime().getTime() > begin.getTime())
+                    .collect(Collectors.toList());
 
             List<JSONObject> jsonObjects = MetaAntvUtil.convert2Antv(stdRichBeans, "date", "price", "p1sd", "p1fsd", "p2sd", "p2fsd");
             List<JSONObject> list = new ArrayList<>();
