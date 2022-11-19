@@ -39,7 +39,7 @@ public class FundGrab {
                 .sorted((p1, p2) -> p1.getTime().compareTo(p2.getTime()))
                 .collect(Collectors.toList());
 
-        Date yesDay = DateUtils.addDays(new Date(), -1);
+        Date yesDay = DateUtils.addDays(new Date(), -10);
 
         if(richBeans == null || richBeans.size() <= 0
                     || richBeans.get(richBeans.size()-1).getTime().getTime() < yesDay.getTime()) {

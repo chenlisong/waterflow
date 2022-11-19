@@ -34,7 +34,8 @@ public class FundController {
     StdStrategy stdStrategy;
 
     @RequestMapping("/std")
-    public String std(Model model, @RequestParam(value = "code") String fundCode) {
+    public String std(Model model, @RequestParam(value = "code", defaultValue = "110020") String fundCode,
+                      @RequestParam(value = "month", defaultValue = "12") int month) {
         logger.info("fund std exec, code is {}...", fundCode);
 
         List<RichBean> richBeans = null;
@@ -44,7 +45,6 @@ public class FundController {
             retreat.initRichBeans(richBeans);
             retreat.handleBaseData();
 
-            int month = 6;
             long diffTime = 1000L * 60 * 60 * 24 * 30 * month;
             List<StdRichBean> stdRichBeans = stdStrategy.convert2Std(richBeans, diffTime);
 

@@ -28,6 +28,9 @@ public class RichBean {
     // 回撤 base
     private double retreat;
 
+    // 最大回撤
+    private double maxRetreat;
+
     @JSONField(serialize = true)
     // 拥有的份额 buy strategy
     private int share;
@@ -132,6 +135,14 @@ public class RichBean {
 
     public void setPre(RichBean pre) {
         this.pre = pre;
+    }
+
+    public double getMaxRetreat() {
+        return maxRetreat;
+    }
+
+    public void setMaxRetreat(double maxRetreat) {
+        this.maxRetreat = maxRetreat;
     }
 
     @Override

@@ -123,6 +123,7 @@ public abstract class BaseStrategy {
             }
 
             maxRetreat = NumberUtils.max(maxRetreat, richBean.getRetreat());
+            richBean.setMaxRetreat(maxRetreat);
 
             buyShare = calBuyShare(richBean, pre);
 
@@ -188,11 +189,13 @@ public abstract class BaseStrategy {
 //        pre = richBean;
     }
 
-    public void profit() {
+    public RichBean profit() {
 
         RichBean last = richBeans.get(richBeans.size()-1);
 
         logger.info("last is {}", last.toString());
+
+        return last;
     }
 
     public void output2File(String fundCode) throws Exception{
