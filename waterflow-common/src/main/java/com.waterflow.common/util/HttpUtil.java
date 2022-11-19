@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -93,6 +94,29 @@ public class HttpUtil {
         } catch (Exception e) {
             logger.error("", e);
         }
+        return null;
+    }
+
+    public static String postWithJson(String url, Map<String, String> headers, String json) throws Exception{
+        try{
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+            RequestBody requestBody = RequestBody.create(JSON, json);
+
+            Request.Builder builder = new Request.Builder();
+            buildHeader(builder, headers);
+            Request request = builder.url(url)
+                    .post(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            Response response = HTTP_CLIENT.newCall(request).execute();
+            //调用成功
+            if (response.isSuccessful() && response.body() != null) {
+                return response.body().string();
+            }
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+
         return null;
     }
 

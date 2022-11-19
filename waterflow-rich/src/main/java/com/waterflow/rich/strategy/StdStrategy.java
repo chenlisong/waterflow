@@ -27,7 +27,7 @@ public class StdStrategy extends BaseStrategy{
         super.handleBaseData();
     }
 
-    public List<StdRichBean> convert2Std(List<RichBean> richBeans, long diffTime) throws Exception{
+    public List<StdRichBean> convert2Std(List<RichBean> richBeans, long diffTime){
 
         List<StdRichBean> stdRichBeans = new ArrayList<>();
         for(int i=0; i<richBeans.size(); i++) {
