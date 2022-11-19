@@ -9,7 +9,7 @@ public class MsgUtil {
 
     static Logger logger = LoggerFactory.getLogger(MsgUtil.class);
 
-    public static String sendWxNotice(String summary, String content) {
+    public static String sendWxNotice(String summary, String content, String toUrl) {
         String url = "https://wxpusher.zjiecode.com/api/send/message";
 
         JSONObject jsonObject = new JSONObject();
@@ -19,7 +19,7 @@ public class MsgUtil {
         jsonObject.put("content", content);
         jsonObject.put("contentType", 2);
         jsonObject.put("topicIds", new Integer[]{8150});
-        jsonObject.put("url", "http://www.baidu.com");
+        jsonObject.put("url", toUrl);
         jsonObject.put("verifyPay", false);
 
         String resp = null;

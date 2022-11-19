@@ -38,7 +38,7 @@ public class FundTask {
     RetreatStrategy retreat;
 
 //    @Scheduled(initialDelay = 1000 * 100000, fixedRate = 3000)
-    @Scheduled(cron = "0 38 10,16 * * ?")
+    @Scheduled(cron = "0 0 9 * * ?")
     public void scheduledTask() {
 
         try{
@@ -68,7 +68,7 @@ public class FundTask {
 
             logger.info("summar is {}", summary);
 
-            MsgUtil.sendWxNotice(summary, summary + "http://localhost:2224/fund/std?code=110020");
+            MsgUtil.sendWxNotice(summary, summary, "http://47.109.105.18/fund/std?code=110020&month=3");
         }catch (Exception e) {
             logger.error("error", e);
         }
