@@ -104,6 +104,10 @@ public abstract class BaseStrategy {
 
     public void dealStrategy() {
         RichBean pre = firstRichBean;
+
+        int maxRetreatDay = 0;
+        int currentRetreatDay = 0;
+
         richLoop: for(RichBean richBean: richBeans) {
             // 记录数据
             int buyShare = 0;
@@ -125,8 +129,20 @@ public abstract class BaseStrategy {
             maxRetreat = NumberUtils.max(maxRetreat, richBean.getRetreat());
             richBean.setMaxRetreat(maxRetreat);
 
+            // 处理回撤持续交易天数、以及保留最大的回撤天数
+            if(richBean.getPrice() < maxPrice) {
+                currentRetreatDay++;
+                maxRetreatDay = NumberUtils.max(currentRetreatDay, maxRetreatDay);
+            }else {
+                currentRetreatDay = 0;
+            }
+            richBean.setRetreatDay(currentRetreatDay);
+            richBean.setMaxRetreatDay(maxRetreatDay);
+
+            // 处理交易策略
             buyShare = calBuyShare(richBean, pre);
 
+            // 处理richBean的数据覆盖情况
             deal(richBean, pre, buyShare);
 
             // 恢复游标数据

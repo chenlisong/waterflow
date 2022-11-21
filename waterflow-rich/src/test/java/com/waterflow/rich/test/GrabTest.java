@@ -21,7 +21,7 @@ import java.io.File;
 
 @SpringBootTest(classes= Application.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("online")
+@ActiveProfiles("dev")
 public class GrabTest {
 
 	private Logger logger = LoggerFactory.getLogger(GrabTest.class);
@@ -78,6 +78,14 @@ public class GrabTest {
 	@Test
 	public void autoGrabFundDataTest() throws Exception{
 		fundGrab.autoGrabFundData("001018");
+	}
+
+	@Test
+	public void fundName() throws Exception{
+		String fundCode = "001018";
+
+		String fundName = fundGrab.fundName(fundCode);
+		logger.info("fund code is {}, name is {}", fundCode, fundName);
 	}
 
 }

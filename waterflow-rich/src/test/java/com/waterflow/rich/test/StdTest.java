@@ -33,7 +33,7 @@ import java.net.URL;
 
 @SpringBootTest(classes= Application.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("online")
+@ActiveProfiles("dev")
 public class StdTest {
 
 	private Logger logger = LoggerFactory.getLogger(StdTest.class);
@@ -162,8 +162,8 @@ public class StdTest {
 		String fundCode = "110020";
 
 		String fundName = "沪深300";
-		StdRichBean sixmonth = fundTask.output(fundCode, 3);
-		StdRichBean oneyear = fundTask.output(fundCode, 12);
+		StdRichBean sixmonth = fundTask.lastRichBean(fundCode, 3);
+		StdRichBean oneyear = fundTask.lastRichBean(fundCode, 12);
 
 		double six = (sixmonth.getPrice() - sixmonth.getP2fsd()) / (sixmonth.getP2sd() - sixmonth.getP2fsd()) * 100;
 		double one = (oneyear.getPrice() - oneyear.getP2fsd()) / (oneyear.getP2sd() - oneyear.getP2fsd()) * 100;

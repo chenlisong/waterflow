@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 @SpringBootTest(classes= Application.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("online")
+@ActiveProfiles("dev")
 public class RetreatStrategyTest {
 
 	private Logger logger = LoggerFactory.getLogger(RetreatStrategyTest.class);

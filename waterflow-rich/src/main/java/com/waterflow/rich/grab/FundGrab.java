@@ -4,7 +4,6 @@ import com.waterflow.common.util.HttpUtil;
 import com.waterflow.rich.strategy.RichBean;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -17,6 +16,7 @@ import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,32 +31,67 @@ public class FundGrab {
     @Value("${project.file.path}")
     String projectFilePath;
 
+    public String fundName(String fundCode) throws Exception {
+        autoDownloadFundFile(fundCode);
+
+        String fundName = null;
+        //1. 加载本地数据，汇集成基础数据
+        String dataFilePath = filePath(fundCode);
+        File file = new File(dataFilePath);
+        if(!file.isFile()) {
+            return fundName;
+        }
+        String content = FileUtils.readFileToString(file, "utf-8");
+
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("js");
+        engine.eval(content);
+
+        fundName = (String) engine.get("fS_name");
+        return fundName;
+    }
+
     public List<RichBean> autoGrabFundData(String fundCode) throws Exception{
         //1. 加载本地数据，汇集成基础数据
-        String dataFilePath = projectFilePath + "/fund/data/" + fundCode + ".js";
-        List<RichBean> richBeans = convertJsCode2RichBean(dataFilePath);
+        autoDownloadFundFile(fundCode);
 
-        long lastModify = new File(dataFilePath).lastModified();
+        List<RichBean> richBeans = convertJsCode2RichBean(fundCode);
 
         richBeans = richBeans.stream()
                 .sorted((p1, p2) -> p1.getTime().compareTo(p2.getTime()))
                 .collect(Collectors.toList());
 
-        Date yesDay = DateUtils.addDays(new Date(), -1);
+        return richBeans;
+    }
 
-        if(richBeans == null || richBeans.size() <= 0
-                    || lastModify < yesDay.getTime()) {
+    public void autoDownloadFundFile(String fundCode) {
 
+        String dataFilePath = projectFilePath + "/fund/data/" + fundCode + ".js";
+
+        long lastModify = new File(dataFilePath).lastModified();
+
+        Date now = new Date();
+        Date yesDay = DateUtils.addDays(now, -1);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.set(Calendar.HOUR, 15);
+        calendar.set(Calendar.MONTH, 30);
+        Date fundEndTime = calendar.getTime();
+
+        Date fund1fEndTime = DateUtils.addDays(fundEndTime, -1);
+
+        /**
+         * 1. 超出一天，则重新下载
+         * 2. 如果中间间隔今天3点，则下载
+         * 3. 如果间隔昨天3点，则下载
+         */
+        if(lastModify < yesDay.getTime()
+                || (lastModify < fundEndTime.getTime() && now.getTime() > fundEndTime.getTime())
+                || (lastModify < fund1fEndTime.getTime() && now.getTime() > fund1fEndTime.getTime())) {
             String downloadUrl = String.format(fundUrl, fundCode);
             HttpUtil.download(downloadUrl, dataFilePath);
-            // 下载后reload
-            richBeans = convertJsCode2RichBean(dataFilePath);
-            richBeans = richBeans.stream()
-                    .sorted((p1, p2) -> p1.getTime().compareTo(p2.getTime()))
-                    .collect(Collectors.toList());
         }
-
-        return richBeans;
     }
 
     public void downloadFundFile(String fundCode) {
@@ -75,7 +110,6 @@ public class FundGrab {
     }
 
     public List<RichBean> convertFile2Bean(String fundCode) throws Exception{
-
         List<RichBean> result = new ArrayList<>();
 
         String filePath = filePath(fundCode);
@@ -105,8 +139,10 @@ public class FundGrab {
         return result;
     }
 
-    public List<RichBean> convertJsCode2RichBean(String filePath) throws Exception{
+    public List<RichBean> convertJsCode2RichBean(String fundCode) throws Exception{
         List<RichBean> result = new ArrayList<>();
+        String filePath = filePath(fundCode);
+
         File file = new File(filePath);
         if(!file.isFile()) {
             return result;
@@ -131,13 +167,8 @@ public class FundGrab {
         return result;
     }
 
-    public static String filePath(String fundCode) {
-        String filePath = System.getProperty("file.path");
-        if(StringUtils.isEmpty(filePath)) {
-            filePath = System.getProperty("user.dir");
-        }
-        filePath = filePath + "/fund/" + fundCode + ".data";
-
+    public String filePath(String fundCode) {
+        String filePath = projectFilePath + "/fund/data/" + fundCode + ".js";
         return filePath;
     }
 

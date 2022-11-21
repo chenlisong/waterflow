@@ -47,6 +47,12 @@ public class RichBean {
     // 市值
     private double marketValue;
 
+    // 回撤持续时间，单位：天
+    private int retreatDay;
+
+    // 回撤持续时间，单位：天
+    private int maxRetreatDay;
+
     private RichBean pre;
 
     public RichBean() {
@@ -143,6 +149,22 @@ public class RichBean {
 
     public void setMaxRetreat(double maxRetreat) {
         this.maxRetreat = maxRetreat;
+    }
+
+    public int getRetreatDay() {
+        return retreatDay;
+    }
+
+    public void setRetreatDay(int retreatDay) {
+        this.retreatDay = retreatDay;
+    }
+
+    public int getMaxRetreatDay() {
+        return maxRetreatDay;
+    }
+
+    public void setMaxRetreatDay(int maxRetreatDay) {
+        this.maxRetreatDay = maxRetreatDay;
     }
 
     @Override

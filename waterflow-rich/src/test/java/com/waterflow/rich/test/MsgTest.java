@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest(classes= Application.class)
 @RunWith(SpringRunner.class)
-@ActiveProfiles("online")
+@ActiveProfiles("dev")
 public class MsgTest {
 
 	private Logger logger = LoggerFactory.getLogger(MsgTest.class);
