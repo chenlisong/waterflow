@@ -1,0 +1,22 @@
+waterflow web application.
+
+
+http://localhost:2222/control/hello?name=lisi
+
+# 正常启动
+java -jar /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar
+
+# 启动线上环境
+java -Dspring.profiles.active=online -jar /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar
+
+# 启动测试环境
+java -Dspring.profiles.active=dev -jar /opt/repository/com/cls/waterflow-web/1.0.0-SNAPSHOT/waterflow-web-1.0.0-SNAPSHOT.jar
+
+# 启动容器-redis
+docker images
+docker pull redis:latest
+docker run -itd --name redis-local -p 6379:6379 redis
+docker exec -it redis-local /bin/bash
+./redis-cli
+exit
+lsof -i:6379

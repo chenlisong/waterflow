@@ -15,6 +15,7 @@
 		<module>waterflow-web</module>
 		<module>waterflow-rich</module>
 		<module>waterflow-common</module>
+		<module>waterflow-ccopen</module>
 	</modules>
 
 	<properties>

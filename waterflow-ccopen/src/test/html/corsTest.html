@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("button").click(function(){
+    $.get("http://localhost:2222/control/hello?name=lisi",function(data,status){
+      alert("数据：" + data + "\n状态：" + status);
+    });
+  });
+});
+</script>
+</head>
+<body>
+
+<button>向页面发送 HTTP GET 请求，然后获得返回的结果</button>
+
+</body>
+</html>
