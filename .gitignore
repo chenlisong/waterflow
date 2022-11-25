@@ -10,3 +10,5 @@
 /waterflow-rich/quotes/*.data
 /waterflow-rich/aliyun/*.json
 /waterflow-ccopen/target/
+/waterflow-ccopen/target/*
+/waterflow-ccopen/waterflow-ccopen.iml
