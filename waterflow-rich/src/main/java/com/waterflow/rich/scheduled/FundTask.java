@@ -55,7 +55,7 @@ public class FundTask {
         NoticeBean firstNotice = result.get(0);
         String summary = firstNotice.toSummary();
 
-        String url = String.format("http://47.109.105.18/fund/std?code=%s&month=3", firstNotice.getFundCode());
+        String url = String.format("http://rich.ccopen.top/fund/std?code=%s&month=3", firstNotice.getFundCode());
         MsgUtil.sendWxNotice(summary, content.toString(), url);
     }
 
