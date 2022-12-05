@@ -52,9 +52,13 @@ public class FundTableController {
     @RequestMapping("/antv-table")
     public String fundTable(Model model, @RequestParam(value = "refresh", defaultValue = "false") boolean refresh) {
         String key = "rich::fund::antv-table";
+        String keyUrl = "rich::fund::antv-table::url";
+
         String cacheValue = LocalCacheUtil.instance().getWithTradeTime(key);
+        String url = LocalCacheUtil.instance().getWithTradeTime(keyUrl);
         if(!refresh && StringUtils.isNotEmpty(cacheValue)) {
             model.addAttribute("data", cacheValue);
+            model.addAttribute("url", url);
             return "antv-table";
         }
 
@@ -75,8 +79,13 @@ public class FundTableController {
             result.add(month);
         }
 
-        model.addAttribute("data", JSON.toJSONString(result, NumberFilter.defaultDouble()));
-        LocalCacheUtil.instance().set(key, JSON.toJSONString(result, NumberFilter.defaultDouble()));
+        String data = JSON.toJSONString(result, NumberFilter.defaultDouble());
+        model.addAttribute("data", data);
+        LocalCacheUtil.instance().set(key, data);
+
+        url = String.format("<a href=\"http://rich.ccopen.top/fund/std?code=%s&month=3\">%s</a>", newNoticeBeans.get(0).getFundCode(), newNoticeBeans.get(0).getFundName());
+        model.addAttribute("url", url);
+        LocalCacheUtil.instance().set(keyUrl, url);
 
         return "antv-table";
     }

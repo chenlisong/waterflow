@@ -24,6 +24,14 @@ public class FundTask {
     @Value(value="${server.port}")
     int serverPort;
 
+    @Scheduled(initialDelay = 1000, fixedRate = 3000 * 10000)
+    public void asyncCall() {
+        try{
+            HttpUtil.get("http://localhost:"+serverPort+"/fund/antv-table?refresh=true", null);
+        }catch (Exception e) {
+        }
+    }
+
 //    @Scheduled(initialDelay = 1000, fixedRate = 3000 * 10000)
     @Scheduled(cron = "0 40 6,15 * * ?")
     public void scheduledTask() {

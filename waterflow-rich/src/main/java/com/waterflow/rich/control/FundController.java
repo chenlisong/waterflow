@@ -70,7 +70,6 @@ public class FundController {
 
             String fundName = fundGrab.fundName(fundCode);
             model.addAttribute("fundName", fundName + "/" + fundCode);
-
         }catch (Exception e) {
             logger.error("error.", e);
         }
