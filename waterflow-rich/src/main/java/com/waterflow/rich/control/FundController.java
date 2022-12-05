@@ -68,6 +68,9 @@ public class FundController {
             list.addAll(jsonObjects);
             model.addAttribute("data", JSON.toJSONString(list));
 
+            String fundName = fundGrab.fundName(fundCode);
+            model.addAttribute("fundName", fundName + "/" + fundCode);
+
         }catch (Exception e) {
             logger.error("error.", e);
         }

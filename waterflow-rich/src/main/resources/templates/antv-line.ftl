@@ -15,11 +15,11 @@
     const config = {
       "title": {
         "visible": true,
-        "text": "多折线图"
+        "text": "基金-3月/12月标准差曲线"
       },
       "description": {
         "visible": true,
-        "text": "一个简单的多折线图"
+        "text": "${fundName}"
       },
       "legend": {
         "flipPage": false

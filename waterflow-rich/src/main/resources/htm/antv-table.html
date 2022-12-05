@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>ChartCube</title>
+    <script src="https://gw.alipayobjects.com/os/lib/antv/g2plot/0.11.3/dist/g2plot.js"></script>
+  </head>
+  <body>
+  <div id="app"></div>
+  <script>
+      const container = document.getElementById('app');
+      const data = [
+        {
+          "x": "家具家电",
+          "type": "门店一",
+          "y": 255
+        },
+        {
+          "x": "家具家电",
+          "type": "门店二",
+          "y": 515
+        },
+        {
+          "x": "粮油副食",
+          "type": "门店一",
+          "y": 112
+        },
+        {
+          "x": "粮油副食",
+          "type": "门店二",
+          "y": 787
+        },
+        {
+          "x": "Column1",
+          "y": 367,
+          "type": "门店一"
+        },
+        {
+          "x": "Column1",
+          "y": 41,
+          "type": "门店二"
+        },
+        {
+          "x": "Column2",
+          "y": 957,
+          "type": "门店一"
+        },
+        {
+          "x": "Column2",
+          "y": 753,
+          "type": "门店二"
+        },
+        {
+          "x": "Column3",
+          "y": 739,
+          "type": "门店一"
+        },
+        {
+          "x": "Column3",
+          "y": 209,
+          "type": "门店二"
+        },
+        {
+          "x": "Column4",
+          "y": 364,
+          "type": "门店一"
+        },
+        {
+          "x": "Column4",
+          "y": 10,
+          "type": "门店二"
+        },
+        {
+          "x": "Column5",
+          "y": 714,
+          "type": "门店一"
+        },
+        {
+          "x": "Column5",
+          "y": 223,
+          "type": "门店二"
+        },
+        {
+          "x": "Column6",
+          "y": 473,
+          "type": "门店一"
+        },
+        {
+          "x": "Column6",
+          "y": 152,
+          "type": "门店二"
+        },
+        {
+          "x": "Column7",
+          "y": 225,
+          "type": "门店一"
+        },
+        {
+          "x": "Column7",
+          "y": 622,
+          "type": "门店二"
+        },
+        {
+          "x": "Column8",
+          "y": 256,
+          "type": "门店一"
+        },
+        {
+          "x": "Column8",
+          "y": 795,
+          "type": "门店二"
+        },
+        {
+          "x": "Column9",
+          "y": 607,
+          "type": "门店一"
+        },
+        {
+          "x": "Column9",
+          "y": 554,
+          "type": "门店二"
+        },
+        {
+          "x": "Column10",
+          "y": 519,
+          "type": "门店一"
+        },
+        {
+          "x": "Column10",
+          "y": 64,
+          "type": "门店二"
+        },
+        {
+          "x": "Column11",
+          "y": 573,
+          "type": "门店一"
+        },
+        {
+          "x": "Column11",
+          "y": 760,
+          "type": "门店二"
+        },
+        {
+          "x": "Column12",
+          "y": 302,
+          "type": "门店一"
+        },
+        {
+          "x": "Column12",
+          "y": 91,
+          "type": "门店二"
+        },
+        {
+          "x": "Column13",
+          "y": 947,
+          "type": "门店一"
+        },
+        {
+          "x": "Column13",
+          "y": 976,
+          "type": "门店二"
+        },
+        {
+          "x": "Column14",
+          "y": 283,
+          "type": "门店一"
+        },
+        {
+          "x": "Column14",
+          "y": 399,
+          "type": "门店二"
+        },
+        {
+          "x": "Column15",
+          "y": 6,
+          "type": "门店一"
+        },
+        {
+          "x": "Column15",
+          "y": 420,
+          "type": "门店二"
+        },
+        {
+          "x": "Column16",
+          "y": 622,
+          "type": "门店一"
+        },
+        {
+          "x": "Column16",
+          "y": 984,
+          "type": "门店二"
+        },
+        {
+          "x": "Column17",
+          "y": 562,
+          "type": "门店一"
+        },
+        {
+          "x": "Column17",
+          "y": 407,
+          "type": "门店二"
+        },
+        {
+          "x": "Column18",
+          "y": 165,
+          "type": "门店一"
+        },
+        {
+          "x": "Column18",
+          "y": 953,
+          "type": "门店二"
+        },
+        {
+          "x": "Column19",
+          "y": 386,
+          "type": "门店一"
+        },
+        {
+          "x": "Column19",
+          "y": 463,
+          "type": "门店二"
+        },
+        {
+          "x": "Column20",
+          "y": 706,
+          "type": "门店一"
+        },
+        {
+          "x": "Column20",
+          "y": 310,
+          "type": "门店二"
+        },
+        {
+          "x": "Column21",
+          "y": 152,
+          "type": "门店一"
+        },
+        {
+          "x": "Column21",
+          "y": 181,
+          "type": "门店二"
+        },
+        {
+          "x": "Column22",
+          "y": 520,
+          "type": "门店一"
+        },
+        {
+          "x": "Column22",
+          "y": 910,
+          "type": "门店二"
+        },
+        {
+          "x": "Column23",
+          "y": 992,
+          "type": "门店一"
+        },
+        {
+          "x": "Column23",
+          "y": 668,
+          "type": "门店二"
+        },
+        {
+          "x": "Column24",
+          "y": 851,
+          "type": "门店一"
+        },
+        {
+          "x": "Column24",
+          "y": 843,
+          "type": "门店二"
+        },
+        {
+          "x": "Column25",
+          "y": 46,
+          "type": "门店一"
+        },
+        {
+          "x": "Column25",
+          "y": 940,
+          "type": "门店二"
+        }
+      ];
+      const config = {
+        "title": {
+          "visible": true,
+          "text": "分组条形图"
+        },
+        "description": {
+          "visible": true,
+          "text": "一个简单的分组条形图"
+        },
+        "legend": {
+          "position": "top-left",
+          "flipPage": false
+        },
+        "xAxis": {
+          "title": {
+            "visible": false
+          }
+        },
+        "forceFit": false,
+        "width": 580,
+        "height": 776,
+        "xField": "y",
+        "yField": "x",
+        "groupField": "type",
+        "color": [
+          "#5B8FF9",
+          "#5AD8A6"
+        ]
+      }
+    const plot = new g2plot.GroupBar(container, {
+      data,
+      ...config,
+    });
+    plot.render();
+  </script>
+  </body>
+</html>
