@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -140,6 +141,37 @@ public class MsgTest {
 
 		String resp = HttpUtil.postWithJson(url, null, jsonObject.toJSONString());
 		logger.info("resp is {}", resp);
+	}
+
+	@Test
+	public void calMoney() {
+		String filePath = "/Users/chenlisong/Downloads/发票-202210-12";
+		File[] files = new File(filePath).listFiles();
+		Map<String, Integer> money = new HashMap<>();
+		Integer all = 0;
+
+		for(File file : files) {
+			logger.info("file name is {}", file.getName());
+			String name = file.getName();
+			String[] nameArr = name.split("-|\\.");
+
+			String owner = nameArr[0];
+			Integer value1 = Integer.parseInt(nameArr[1]);
+
+			if(value1 > 10) {
+				money.put(owner, money.getOrDefault(owner, 0) + value1);
+				all += value1;
+			}else {
+				Integer value2 = Integer.parseInt(nameArr[2]);
+				money.put(owner, money.getOrDefault(owner, 0) + value2);
+				all += value2;
+			}
+		}
+
+		logger.info("file path is {}", filePath);
+		logger.info("money output is {}", JSON.toJSONString(money));
+		logger.info("money all is {}", all);
+
 	}
 }
 

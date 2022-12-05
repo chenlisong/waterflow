@@ -159,31 +159,31 @@ public class StdTest {
 
 	@Test
 	public void outputTest() throws Exception{
-		String fundCode = "110020";
-
-		String fundName = "沪深300";
-		StdRichBean sixmonth = fundTask.lastRichBean(fundCode, 3);
-		StdRichBean oneyear = fundTask.lastRichBean(fundCode, 12);
-
-		double six = (sixmonth.getPrice() - sixmonth.getP2fsd()) / (sixmonth.getP2sd() - sixmonth.getP2fsd()) * 100;
-		double one = (oneyear.getPrice() - oneyear.getP2fsd()) / (oneyear.getP2sd() - oneyear.getP2fsd()) * 100;
-
-		double sixMonthStd = NumberUtils.toScaledBigDecimal(six, Integer.valueOf(1), RoundingMode.HALF_UP).doubleValue();
-		double oneYearStd = NumberUtils.toScaledBigDecimal(one, Integer.valueOf(1), RoundingMode.HALF_UP).doubleValue();
-
-		List<RichBean> richBeans = fundGrab.autoGrabFundData(fundCode);
-		retreat.setConfig(10, 140, 5);
-		retreat.initRichBeans(richBeans);
-		retreat.handleBaseData();
-		retreat.dealStrategy();
-		RichBean richBean = retreat.profit();
-
-		double retreat = NumberUtils.toScaledBigDecimal(richBean.getRetreat(), Integer.valueOf(1), RoundingMode.HALF_UP).doubleValue();
-		double maxRetreat = NumberUtils.toScaledBigDecimal(richBean.getMaxRetreat(), Integer.valueOf(1), RoundingMode.HALF_UP).doubleValue();
-
-		String summary = String.format("%s，1ystd：%s%%，3mstd:%s%%, 回撤：%s/%s%%", fundName, sixMonthStd, oneYearStd, retreat, maxRetreat);
-
-		logger.info("summar is {}", summary);
+//		String fundCode = "110020";
+//
+//		String fundName = "沪深300";
+//		StdRichBean sixmonth = fundTask.lastRichBean(fundCode, 3);
+//		StdRichBean oneyear = fundTask.lastRichBean(fundCode, 12);
+//
+//		double six = (sixmonth.getPrice() - sixmonth.getP2fsd()) / (sixmonth.getP2sd() - sixmonth.getP2fsd()) * 100;
+//		double one = (oneyear.getPrice() - oneyear.getP2fsd()) / (oneyear.getP2sd() - oneyear.getP2fsd()) * 100;
+//
+//		double sixMonthStd = NumberUtils.toScaledBigDecimal(six, Integer.valueOf(1), RoundingMode.HALF_UP).doubleValue();
+//		double oneYearStd = NumberUtils.toScaledBigDecimal(one, Integer.valueOf(1), RoundingMode.HALF_UP).doubleValue();
+//
+//		List<RichBean> richBeans = fundGrab.autoGrabFundData(fundCode);
+//		retreat.setConfig(10, 140, 5);
+//		retreat.initRichBeans(richBeans);
+//		retreat.handleBaseData();
+//		retreat.dealStrategy();
+//		RichBean richBean = retreat.profit();
+//
+//		double retreat = NumberUtils.toScaledBigDecimal(richBean.getRetreat(), Integer.valueOf(1), RoundingMode.HALF_UP).doubleValue();
+//		double maxRetreat = NumberUtils.toScaledBigDecimal(richBean.getMaxRetreat(), Integer.valueOf(1), RoundingMode.HALF_UP).doubleValue();
+//
+//		String summary = String.format("%s，1ystd：%s%%，3mstd:%s%%, 回撤：%s/%s%%", fundName, sixMonthStd, oneYearStd, retreat, maxRetreat);
+//
+//		logger.info("summar is {}", summary);
 	}
 
 
