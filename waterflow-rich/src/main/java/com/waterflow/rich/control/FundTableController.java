@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.waterflow.rich.bean.NoticeBean;
 import com.waterflow.rich.grab.FundGrab;
+import com.waterflow.rich.scheduled.FundTask;
 import com.waterflow.rich.service.FundService;
 import com.waterflow.rich.strategy.RetreatStrategy;
 import com.waterflow.rich.strategy.RichBean;
@@ -83,10 +84,20 @@ public class FundTableController {
         model.addAttribute("data", data);
         LocalCacheUtil.instance().set(key, data);
 
-        url = String.format("<a href=\"http://rich.ccopen.top/fund/std?code=%s&month=3\">%s</a>", newNoticeBeans.get(0).getFundCode(), newNoticeBeans.get(0).getFundName());
+        url = String.format("<a href=\"http://rich.ccopen.top/fund/std/diff?code=%s&shortmonth=3&longmonth=12\">%s</a>", newNoticeBeans.get(0).getFundCode(), newNoticeBeans.get(0).getFundName());
         model.addAttribute("url", url);
         LocalCacheUtil.instance().set(keyUrl, url);
 
         return "antv-table";
     }
+
+    @Autowired
+    FundTask fundTask;
+
+    @RequestMapping("/crontask/call")
+    public String fundTable() {
+        fundTask.scheduledTask();
+        return "ok";
+    }
+
 }
