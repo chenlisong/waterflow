@@ -16,6 +16,7 @@ public class EmpResourceTest {
 
     Logger logger = LoggerFactory.getLogger(EmpResourceTest.class);
 
+
     @Test
     public void ocrTest() throws Exception{
 

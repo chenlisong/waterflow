@@ -143,6 +143,9 @@ public class MsgTest {
 		logger.info("resp is {}", resp);
 	}
 
+	/**
+	 * 发票
+	 */
 	@Test
 	public void calMoney() {
 		String filePath = "/Users/chenlisong/Downloads/发票-202210-12";
