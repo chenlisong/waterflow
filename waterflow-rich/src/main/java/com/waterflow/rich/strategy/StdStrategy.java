@@ -78,6 +78,43 @@ public class StdStrategy extends BaseStrategy{
         return stdRichBeans;
     }
 
+    public void convert2CommonStd(List<? extends StdRichBean> beans, int diffTime){
+
+        for(int i=0; i<beans.size(); i++) {
+
+            StdRichBean richBean = beans.get(i);
+
+            //1. 求平均值
+            double sum = 0.0;
+            int cnt = 0;
+            StdRichBean tmp = richBean;
+
+            int tmpDiffTime = diffTime;
+            while(tmp != null && tmp.getPre()!= null && tmpDiffTime-- > 0) {
+                cnt += 1;
+                sum += tmp.getPrice();
+                tmp = tmp.getPre();
+            }
+
+            double average = cnt > 0 ? sum/cnt : 0.0;
+            tmp = richBean;
+            sum = 0.0;
+
+            tmpDiffTime = diffTime;
+            while(tmp != null && tmp.getPre()!= null && tmpDiffTime-- > 0) {
+                sum += Math.pow(tmp.getPrice() - average, 2);
+                tmp = tmp.getPre();
+            }
+
+            double std = cnt > 0 ? Math.sqrt(sum/(cnt-1)) : 0.0;
+
+            richBean.setP1sd(average + std);
+            richBean.setP2sd(average + std + std);
+            richBean.setP1fsd(average - std);
+            richBean.setP2fsd(average - std - std);
+        }
+    }
+
 
 
     @Override

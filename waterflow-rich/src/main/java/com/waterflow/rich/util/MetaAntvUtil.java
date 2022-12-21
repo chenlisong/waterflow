@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MetaAntvUtil {
@@ -25,6 +26,43 @@ public class MetaAntvUtil {
             Field field = cls.getDeclaredField(fields[i]);
             field.setAccessible(true);
             seriesField[i-1] = field;
+        }
+
+        for(Field yField : seriesField) {
+            String fieldName = yField.getName();
+            for (Object obj : data) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("x", xField.get(obj));
+                jsonObject.put("y", yField.get(obj));
+                jsonObject.put("series", fieldName);
+                list.add(jsonObject);
+            }
+        }
+        return list;
+    }
+
+    public static List<JSONObject> convert2AntvWithSuperClass(List<? extends Object> data, String firstField, String ... fields) throws Exception{
+        if(CollectionUtils.isEmpty(data) || fields == null || fields.length < 3) {
+            return null;
+        }
+
+        List<JSONObject> list = new ArrayList<>();
+
+        Class cls = data.get(0).getClass();
+        Field xField = null;
+
+        List<Field> seriesField = new ArrayList<>();
+        List<String> fieldNameArray = Arrays.asList(fields);
+        while (cls != null){
+            for(Field tmp : cls.getDeclaredFields()) {
+                if(firstField.equals(tmp.getName())) {
+                    xField = tmp;
+                }else if(fieldNameArray.contains(tmp.getName())) {
+                    seriesField.add(tmp);
+                }
+                tmp.setAccessible(true);
+            }
+            cls = cls.getSuperclass();
         }
 
         for(Field yField : seriesField) {

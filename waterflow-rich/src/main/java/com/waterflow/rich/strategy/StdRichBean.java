@@ -21,6 +21,8 @@ public class StdRichBean {
 
     private Date time;
 
+    private StdRichBean pre;
+
     public Date getTime() {
         return time;
     }
@@ -83,5 +85,13 @@ public class StdRichBean {
 
     public void setX(BigDecimal x) {
         this.x = x;
+    }
+
+    public StdRichBean getPre() {
+        return pre;
+    }
+
+    public void setPre(StdRichBean pre) {
+        this.pre = pre;
     }
 }

@@ -70,8 +70,8 @@ public class LocalCacheUtil {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
-        calendar.set(Calendar.HOUR, 15);
-        calendar.set(Calendar.MONTH, 30);
+        calendar.set(Calendar.HOUR_OF_DAY, 15);
+        calendar.set(Calendar.MINUTE, 30);
         Date fundEndTime = calendar.getTime();
 
         Date fund1fEndTime = DateUtils.addDays(fundEndTime, -1);
