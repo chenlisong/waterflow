@@ -34,6 +34,22 @@ public class LocalCacheUtil {
         return cacheData.get(key);
     }
 
+    public String getWithTtl(String key, int hour) {
+        Long ttlTime = cacheTtl.get(key + TTL);
+        long nowTime = DateUtils.addHours(new Date(), -1 * hour).getTime();
+
+        if(cacheData.get(key) == null) {
+            return null;
+        }
+
+        if(ttlTime != null && ttlTime > nowTime) {
+            return cacheData.get(key);
+        }
+        remove(key);
+
+        return null;
+    }
+
     public String getWithTradeTime(String key) {
         String value = cacheData.get(key);
         Long ttl = cacheTtl.get(key + TTL);

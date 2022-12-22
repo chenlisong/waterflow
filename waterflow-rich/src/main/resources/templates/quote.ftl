@@ -9,6 +9,8 @@
   </head>
   <body>
   <div id="app"></div>
+
+  <div id="app2">${content}</div>
   <script>
     const container = document.getElementById('app');
     const data = ${data};

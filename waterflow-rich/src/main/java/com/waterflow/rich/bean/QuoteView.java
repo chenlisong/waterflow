@@ -1,6 +1,8 @@
 package com.waterflow.rich.bean;
 
 import com.alibaba.fastjson2.JSON;
+import com.waterflow.rich.strategy.RichBean;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 public class QuoteView extends Quote{
 
@@ -80,5 +82,18 @@ public class QuoteView extends Quote{
     public static QuoteView convert (Quote quote) {
         byte[] bytes = JSON.toJSONBytes(quote);
         return JSON.parseObject(bytes, QuoteView.class);
+    }
+
+    public static QuoteView convert (RichBean richBean) {
+        QuoteView qv = new QuoteView();
+        double price = richBean.getPrice();
+        qv.setHighPrice(price);
+        qv.setPrice(price);
+        qv.setClosePrice(price);
+        qv.setBeginPrice(price);
+        qv.setLowPrice(price);
+        qv.setDate(DateFormatUtils.format(richBean.getTime(), "yyyy-MM-dd"));
+        qv.setTime(richBean.getTime());
+        return qv;
     }
 }

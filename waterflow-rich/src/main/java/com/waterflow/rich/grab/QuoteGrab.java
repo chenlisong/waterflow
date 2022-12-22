@@ -54,8 +54,8 @@ public class QuoteGrab {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
-        calendar.set(Calendar.HOUR_OF_DAY, 15);
-        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        calendar.set(Calendar.MINUTE, 0);
         Date endTime = calendar.getTime();
 
         Date fund1fEndTime = DateUtils.addDays(endTime, -1);
@@ -110,11 +110,11 @@ public class QuoteGrab {
                 .filter(quote -> quote.getClosePrice() > 0)
                 .collect(Collectors.toList());
 
-        Quote pre = null;
-        for(Quote quote: result) {
-            quote.setPre(pre);
-            pre = quote;
-        }
+//        Quote pre = null;
+//        for(Quote quote: result) {
+//            quote.setPre(pre);
+//            pre = quote;
+//        }
 
         return result;
     }
