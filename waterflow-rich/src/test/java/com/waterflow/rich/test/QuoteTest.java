@@ -1,9 +1,12 @@
 package com.waterflow.rich.test;
 
 import com.alibaba.fastjson.JSON;
+import com.waterflow.rich.bean.BuyPoint;
 import com.waterflow.rich.bean.Quote;
+import com.waterflow.rich.bean.QuoteView;
 import com.waterflow.rich.grab.QuoteGrab;
 import com.waterflow.rich.init.Application;
+import com.waterflow.rich.service.QuoteService;
 import com.waterflow.rich.strategy.StdStrategy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +32,9 @@ public class QuoteTest {
     @Autowired
     StdStrategy stdStrategy;
 
+    @Autowired
+    QuoteService quoteService;
+
     @Test
     public void hello() {
         logger.info("hello is {}", "cls");
@@ -52,6 +58,23 @@ public class QuoteTest {
 
         logger.info("quote is {}", JSON.toJSONString(quoteList.get(1000)));
         logger.info("quote date is {}", JSON.toJSONString(quoteList.get(1000).getDate()));
+    }
+
+    @Test
+    public void buypoint() throws Exception{
+        String[] codes = new String[]{"0600150", "001018"};
+        for(String code: codes) {
+            List<QuoteView> views = quoteService.quoteViews(code);
+            quoteService.writeLink(views);
+            stdStrategy.convert2CommonStd(views, 2 * 20);
+
+            List<BuyPoint> points = quoteService.buyPointList(views);
+
+            String content = BuyPoint.output(points);
+            logger.info("code: {}, views: {}", code, JSON.toJSONString(points));
+            logger.info("code: {}, content: {}", code, content);
+        }
+
     }
 
 }

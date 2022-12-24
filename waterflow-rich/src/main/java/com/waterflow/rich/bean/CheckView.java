@@ -1,5 +1,6 @@
 package com.waterflow.rich.bean;
 
+
 public class CheckView {
 
     private String code;
@@ -7,6 +8,8 @@ public class CheckView {
     private String name;
 
     private Double amp;
+
+    private Double ampLast;
 
     private Double stdPer;
 
@@ -20,6 +23,17 @@ public class CheckView {
     private int level;
 
     private String levelView;
+
+    public String skip() {
+        int len = code.length() + name.length();
+        String skip = "";
+        if(len < 30) {
+            for(int i=0; i<20-len; i++) {
+                skip += "&#12288;";
+            }
+        }
+        return skip;
+    }
 
     public String getCode() {
         return code;
@@ -79,5 +93,13 @@ public class CheckView {
 
     public void setLevelView(String levelView) {
         this.levelView = levelView;
+    }
+
+    public Double getAmpLast() {
+        return ampLast;
+    }
+
+    public void setAmpLast(Double ampLast) {
+        this.ampLast = ampLast;
     }
 }

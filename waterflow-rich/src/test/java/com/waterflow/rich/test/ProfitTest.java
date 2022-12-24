@@ -58,7 +58,36 @@ public class ProfitTest {
     String[] fundCodes = new String[] {
             "004432", "110020", "501302", "004488", "004532", "003765", "004069", "002656", "001631", "001455",
             "0600428", "0601020", "0600150", "0601989", "1002594",
-            "159915", "159920", "159919", "159922", "159949", "159941", "159865", "159857", "159883", "159870", "159828", "159952", "159938", "159813", "159905", "159916", "159869", "159929", "159837", "159867", "159801", "159843", "159861", "159939", "159824", "159886", "159850", "159945", "159930", "159863", "159954", "159839", "159871"};
+            "159915", "159920", "159919", "159922", "159949", "159941", "159865", "159857", "159883", "159870", "159828", "159952", "159938", "159813", "159905", "159916", "159869", "159929", "159837", "159867", "159801", "159843", "159861", "159939", "159824", "159886", "159850", "159945", "159930", "159954", "159839", "159871"};
+
+    @Test
+    public void less2Year() throws Exception {
+
+        Date time = new Date();
+        time = DateUtils.addYears(time, -1);
+
+        List<String> result = new ArrayList<>();
+
+        for(String code : fundCodes) {
+            if(code.length() == 6) {
+                List<RichBean> richBeans = fundGrab.autoGrabFundData(code);
+                RichBean richBean = richBeans.get(0);
+
+                if(richBean == null || richBean.getTime() == null || richBean.getTime().getTime() > time.getTime()) {
+                    result.add(code);
+                }
+            }else {
+                List<Quote> quotes = quoteGrab.findAll(code);
+                Quote quote = quotes.get(0);
+                if(quote == null || quote.getTime() == null || quote.getTime().getTime() > time.getTime()) {
+                    result.add(code);
+                }
+            }
+        }
+
+        logger.info("less two year code is {}", JSON.toJSONString(result));
+
+    }
 
     @Test
     public void stdTimes() throws Exception{

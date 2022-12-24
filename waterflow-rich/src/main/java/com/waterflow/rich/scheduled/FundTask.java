@@ -24,6 +24,9 @@ public class FundTask {
     @Value(value="${server.port}")
     int serverPort;
 
+    @Value(value="${spring.profiles.active}")
+    String profile;
+
 //    @Scheduled(initialDelay = 1000, fixedRate = 3000 * 10000)
     public void asyncCall() {
         try{

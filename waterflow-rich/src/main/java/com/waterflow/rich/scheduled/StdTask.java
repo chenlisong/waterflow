@@ -28,10 +28,17 @@ public class StdTask {
     @Value(value="${server.port}")
     int serverPort;
 
+    @Value(value="${spring.profiles.active}")
+    String profile;
+
     String url = "http://rich.ccopen.top/quote/checkview";
 
-    @Scheduled(initialDelay = 1000, fixedRate = 1000 * 60 * 50)
+    @Scheduled(initialDelay = 1000, fixedRate = 1000 * 60 * 40)
     public void asyncCall() {
+        if(!"online".equals(profile)) {
+            return;
+        }
+
         try{
             HttpUtil.get(url, null);
         }catch (Exception e) {
@@ -42,11 +49,15 @@ public class StdTask {
     @Scheduled(cron = "0 0 6,19 * * ?")
     public void scheduledTask() {
 
+        if(!"online".equals(profile)) {
+            return;
+        }
+
         try{
             String[] codes = new String[] {
                     "004432", "110020", "501302", "004488", "004532", "003765", "004069", "002656", "001631", "001455",
                     "0600428", "0601020", "0600150", "0601989", "1002594",
-                    "159915", "159920", "159919", "159922", "159949", "159941", "159865", "159857", "159883", "159870", "159828", "159952", "159938", "159813", "159905", "159916", "159869", "159929", "159837", "159867", "159801", "159843", "159861", "159939", "159824", "159886", "159850", "159945", "159930", "159863", "159954", "159839", "159871"};
+                    "159915", "159920", "159919", "159922", "159949", "159941", "159865", "159857", "159883", "159870", "159828", "159952", "159938", "159813", "159905", "159916", "159869", "159929", "159837", "159867", "159801", "159843", "159861", "159939", "159824", "159886", "159850", "159945", "159930", "159954", "159839", "159871"};
 
             List<CheckView> views = quoteService.checkView(codes);
 

@@ -1,5 +1,6 @@
 package com.waterflow.rich.service;
 
+import com.waterflow.rich.bean.BuyPoint;
 import com.waterflow.rich.bean.CheckView;
 import com.waterflow.rich.bean.Quote;
 import com.waterflow.rich.bean.QuoteView;
@@ -278,14 +279,14 @@ public class QuoteService {
                 .append(timeFormat)
                 .append("</br></br>");
         for(CheckView view: views) {
-            String line = String.format("%s:%s/%s, std: %s, amp: %s", view.getLevelView(), view.getName()
-                , view.getCode(), view.getStdPer(), view.getAmp());
+            String line = String.format("%s:%s/%s, std: %s, amp: %s, amp last: %s", view.getLevelView(), view.getName()
+                , view.getCode() + view.skip(), String.format("%.2f", view.getStdPer()), view.getAmp(), view.getAmpLast());
 
             String href = null;
             if(view.getCode().length() == 6) {
-                href = String.format(", <a href=\"http://rich.ccopen.top/quote/fund/std?skipYear=-1&code=%s&month=8\">8m标准差</a>", view.getCode());
+                href = String.format(", <a href=\"http://rich.ccopen.top/quote/fund/std?skipYear=-3&code=%s&month=8\">8m标准差</a>", view.getCode());
             }else {
-                href = String.format(", <a href=\"http://rich.ccopen.top/quote/std?skipYear=-1&code=%s&month=2\">2m标准差</a>", view.getCode());
+                href = String.format(", <a href=\"http://rich.ccopen.top/quote/std?skipYear=-3&code=%s&month=2\">2m标准差</a>", view.getCode());
             }
 
             sb.append(line)
@@ -299,10 +300,18 @@ public class QuoteService {
     public List<CheckView> checkView(String[] codes) throws Exception{
         List<CheckView> views = new ArrayList<>();
         for(String code: codes) {
-            double amp = avgAmp(code);
+            int diffTime = code.length() == 6 ? 8 * 20 : 2* 20;
+
+            List<QuoteView> quoteViews = quoteViews(code);
+            writeLink(quoteViews);
+            stdStrategy.convert2CommonStd(quoteViews, diffTime);
+
+            double amp = avgAmp(quoteViews);
+            double ampLast = avgAmpLast(quoteViews);
             CheckView view = new CheckView();
             view.setCode(code);
             view.setAmp(amp);
+            view.setAmpLast(ampLast);
 
             QuoteView last = lastWithStd(code);
 
@@ -340,11 +349,11 @@ public class QuoteService {
                 }else if(diff < 0) {
                     return -1;
                 }
-                double diffAmp = o1.getAmp() - o2.getAmp();
+                double diffAmp = o1.getStdPer() - o2.getStdPer();
                 if(diffAmp > 0) {
-                    return -1;
-                }else {
                     return 1;
+                }else {
+                    return -1;
                 }
             }
         });
@@ -392,24 +401,7 @@ public class QuoteService {
      * @throws Exception
      */
     public double avgAmp(String code) throws Exception{
-        List<QuoteView> quoteViews = null;
-        if(code.length() != 6) {
-            quoteGrab.downloadQuoteFile(code);
-            List<Quote> quotes = quoteGrab.findAll(code);
-
-            quoteViews = quotes.stream()
-                    .map(quote -> {
-                        return QuoteView.convert(quote);
-                    })
-                    .collect(Collectors.toList());
-        }else {
-            List<RichBean> richBeans = fundGrab.autoGrabFundData(code);
-            quoteViews = richBeans.stream()
-                    .map(richBean -> {
-                        return QuoteView.convert(richBean);
-                    })
-                    .collect(Collectors.toList());
-        }
+        List<QuoteView> quoteViews = quoteViews(code);
 
         Date now = new Date();
         Date begin = DateUtils.addYears(now, -3);
@@ -440,6 +432,97 @@ public class QuoteService {
         }
 
         return amp.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+    }
+
+    public double avgAmp(List<QuoteView> quoteViews) throws Exception{
+        List<BuyPoint> points = buyPointList(quoteViews);
+
+        double avg = BuyPoint.avgAmp(points);
+        String str = String.format("%.2f", avg);
+        avg = Double.parseDouble(str);
+        return avg;
+    }
+
+    public double avgAmpLast(List<QuoteView> quoteViews) throws Exception{
+        List<BuyPoint> points = buyPointList(quoteViews);
+
+        double avg = BuyPoint.avgAmpLast(points);
+        String str = String.format("%.1f", avg);
+        avg = Double.parseDouble(str);
+        return avg;
+    }
+
+    public List<QuoteView> quoteViews(String code) throws Exception {
+        List<QuoteView> quoteViews = null;
+        if (code.length() != 6) {
+            quoteGrab.downloadQuoteFile(code);
+            List<Quote> quotes = quoteGrab.findAll(code);
+
+            quoteViews = quotes.stream()
+                    .map(quote -> {
+                        return QuoteView.convert(quote);
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            List<RichBean> richBeans = fundGrab.autoGrabFundData(code);
+            quoteViews = richBeans.stream()
+                    .map(richBean -> {
+                        return QuoteView.convert(richBean);
+                    })
+                    .collect(Collectors.toList());
+        }
+        return quoteViews;
+    }
+
+    public List<BuyPoint> buyPointList(List<QuoteView> quoteViews) throws Exception {
+        LinkedList<BuyPoint> list = new LinkedList<>();
+
+        Date in = null;
+
+        // -2std持续时间
+        int last = 0;
+
+        double maxPrice = 0;
+        int ampLast = 0;
+
+        BuyPoint tmp = null;
+
+        for (QuoteView qv : quoteViews) {
+            QuoteView pre = qv.getPreQuoteView();
+            if (pre == null) continue;
+
+            if (pre.getPrice() > pre.getP2fsd() && qv.getPrice() < qv.getP2fsd()) {
+                in = qv.getTime();
+            }
+
+            // 从-2std 出来
+            if (in != null && pre.getPrice() < pre.getP2fsd() && qv.getPrice() > qv.getP2fsd()) {
+
+                tmp = new BuyPoint(qv.getTime(), qv.getPrice(), last);
+                list.offerLast(tmp);
+
+                in = null;
+                last = 0;
+                maxPrice = 0;
+                ampLast = 0;
+            }
+
+            if (in != null) {
+                last++;
+            }
+
+            ampLast++;
+
+            if(list.size() > 0 && qv.getPrice() > maxPrice) {
+                maxPrice = qv.getPrice();
+                BuyPoint lastPoint = list.peekLast();
+                lastPoint.setAmp((maxPrice - lastPoint.getPrice()) / lastPoint.getPrice());
+                lastPoint.setAmpLast(ampLast);
+            }
+
+        }
+
+        return list;
     }
 
 }

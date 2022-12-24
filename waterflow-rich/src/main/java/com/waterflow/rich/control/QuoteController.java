@@ -96,7 +96,10 @@ public class QuoteController {
             String fundName = fundGrab.fundName(code);
             model.addAttribute("fundName", fundName + "/" + code);
 
-            String content = quoteService.outputBuyPoint(quoteViews);
+//            String content = quoteService.outputBuyPoint(quoteViews);
+            List<BuyPoint> points = quoteService.buyPointList(quoteViews);
+
+            String content = BuyPoint.output(points);
             model.addAttribute("content", content);
         }catch (Exception e) {
             logger.error("error.", e);
@@ -162,7 +165,10 @@ public class QuoteController {
             String fundName = quoteGrab.quoteName(code);
             model.addAttribute("fundName", fundName + "/" + code);
 
-            String content = quoteService.outputBuyPoint(quoteViews);
+//            String content = quoteService.outputBuyPoint(quoteViews);
+            List<BuyPoint> points = quoteService.buyPointList(quoteViews);
+
+            String content = BuyPoint.output(points);
             model.addAttribute("content", content);
         }catch (Exception e) {
             logger.error("error.", e);
@@ -253,11 +259,11 @@ public class QuoteController {
         String[] codes = new String[] {
                 "004432", "110020", "501302", "004488", "004532", "003765", "004069", "002656", "001631", "001455",
                 "0600428", "0601020", "0600150", "0601989", "1002594",
-                "159915", "159920", "159919", "159922", "159949", "159941", "159865", "159857", "159883", "159870", "159828", "159952", "159938", "159813", "159905", "159916", "159869", "159929", "159837", "159867", "159801", "159843", "159861", "159939", "159824", "159886", "159850", "159945", "159930", "159863", "159954", "159839", "159871"};
+                "159915", "159920", "159919", "159922", "159949", "159941", "159865", "159857", "159883", "159870", "159828", "159952", "159938", "159813", "159905", "159916", "159869", "159929", "159837", "159867", "159801", "159843", "159861", "159939", "159824", "159886", "159850", "159945", "159930", "159954", "159839", "159871"};
 
         try{
             String cacheKey = "checkview::data";
-            String html = LocalCacheUtil.instance().getWithTtl(cacheKey, 1);
+            String html = LocalCacheUtil.instance().getWithTtl(cacheKey, 2);
             if(html == null) {
                 List<CheckView> views = quoteService.checkView(codes);
                 html = quoteService.checkViewHtml(views);
