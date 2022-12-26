@@ -7,6 +7,7 @@ import com.waterflow.rich.bean.QuoteView;
 import com.waterflow.rich.grab.QuoteGrab;
 import com.waterflow.rich.init.Application;
 import com.waterflow.rich.service.QuoteService;
+import com.waterflow.rich.strategy.StdRichBean;
 import com.waterflow.rich.strategy.StdStrategy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,6 +76,20 @@ public class QuoteTest {
             logger.info("code: {}, content: {}", code, content);
         }
 
+    }
+
+    @Test
+    public void breach() throws Exception{
+        String[] codes = new String[]{"0601020"};
+        int diffTime = 1 * 20;
+
+        for(String code: codes) {
+            List<QuoteView> views = quoteService.quoteViews(code);
+
+            quoteService.writeLink(views);
+            StdRichBean result = stdStrategy.breach(views, diffTime);
+            logger.info("code: {}, result: {}", code, JSON.toJSONString(result));
+        }
     }
 
 }

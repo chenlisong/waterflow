@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson2.JSON;
 import com.waterflow.rich.bean.*;
 import com.waterflow.rich.grab.FundGrab;
+import com.waterflow.rich.grab.HkGrab;
 import com.waterflow.rich.grab.QuoteGrab;
 import com.waterflow.rich.service.FundService;
 import com.waterflow.rich.service.QuoteService;
@@ -44,6 +45,9 @@ public class QuoteController {
     @Autowired
     FundGrab fundGrab;
 
+    @Autowired
+    HkGrab hkGrab;
+
     @RequestMapping("/fund/std")
     public String fundStd(Model model, @RequestParam(value = "code", defaultValue = "0600150") String code,
                       @RequestParam(value = "month", defaultValue = "3") int month,
@@ -71,8 +75,6 @@ public class QuoteController {
 
             quoteService.avgCommon(quoteViews, "price", "avg5Price", -1, 5);
 
-            double stand = quoteViews.stream().min(Comparator.comparing(view -> view.getP2fsd()))
-                    .get().getP2fsd();
             quoteService.signleDo(quoteViews);
 
             quoteViews = quoteViews.stream()
@@ -98,9 +100,69 @@ public class QuoteController {
 
 //            String content = quoteService.outputBuyPoint(quoteViews);
             List<BuyPoint> points = quoteService.buyPointList(quoteViews);
+            String breanchView = stdStrategy.breachView(quoteViews, diffTime);
 
             String content = BuyPoint.output(points);
-            model.addAttribute("content", content);
+            model.addAttribute("content", breanchView + content);
+        }catch (Exception e) {
+            logger.error("error.", e);
+        }
+
+        return "quote";
+    }
+
+    @RequestMapping("/hk/std")
+    public String hkStd(Model model, @RequestParam(value = "code", defaultValue = "00520") String code,
+                          @RequestParam(value = "month", defaultValue = "1") int month,
+                          @RequestParam(value = "skipYear", defaultValue = "-3") int skipYear) throws Exception{
+        logger.info("quote std exec, code is {}...", code);
+
+        try{
+            List<QuoteView> quoteViews = hkGrab.findAll(code);
+
+            quoteService.writeLink(quoteViews);
+
+
+            int diffTime = month * 20;
+            stdStrategy.convert2CommonStd(quoteViews, diffTime);
+
+            Date output = DateUtils.addYears(new Date(), skipYear);
+            Date beginCal = DateUtils.addMonths(output, month);
+            quoteViews = quoteViews.stream()
+                    .filter(bean -> bean.getTime().getTime() > beginCal.getTime())
+                    .collect(Collectors.toList());
+
+            quoteService.avgCommon(quoteViews, "price", "avg5Price", -1, 5);
+
+            quoteService.signleDo(quoteViews);
+
+            quoteViews = quoteViews.stream()
+                    .filter(bean -> bean.getTime().getTime() > output.getTime())
+                    .collect(Collectors.toList());
+
+            List<JSONObject> jsonObjects = MetaAntvUtil.convert2AntvWithSuperClass(quoteViews,
+                    "date", "price", "p1sd", "p1fsd", "p2sd", "p2fsd"
+                    , "avg5Price", "buyFlag");
+            List<JSONObject> list = new ArrayList<>();
+
+            JSONObject bugfix = new JSONObject();
+            bugfix.put("x", "1-1");
+            bugfix.put("y", 0);
+            bugfix.put("series", "t1");
+            list.add(bugfix);
+
+            list.addAll(jsonObjects);
+            model.addAttribute("data", JSON.toJSONString(list));
+
+            String hkName = hkGrab.hkName(code);
+            model.addAttribute("fundName", hkName + "/" + code);
+
+//            String content = quoteService.outputBuyPoint(quoteViews);
+            List<BuyPoint> points = quoteService.buyPointList(quoteViews);
+            String breanchView = stdStrategy.breachView(quoteViews, diffTime);
+
+            String content = BuyPoint.output(points);
+            model.addAttribute("content", breanchView + content);
         }catch (Exception e) {
             logger.error("error.", e);
         }
@@ -167,9 +229,10 @@ public class QuoteController {
 
 //            String content = quoteService.outputBuyPoint(quoteViews);
             List<BuyPoint> points = quoteService.buyPointList(quoteViews);
+            String breanchView = stdStrategy.breachView(quoteViews, diffTime);
 
             String content = BuyPoint.output(points);
-            model.addAttribute("content", content);
+            model.addAttribute("content", breanchView + content);
         }catch (Exception e) {
             logger.error("error.", e);
         }

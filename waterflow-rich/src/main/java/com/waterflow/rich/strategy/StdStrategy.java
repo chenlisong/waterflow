@@ -1,6 +1,12 @@
 package com.waterflow.rich.strategy;
 
 
+import cn.hutool.core.date.DateUnit;
+import com.alibaba.fastjson.JSON;
+import com.waterflow.rich.bean.Quote;
+import com.waterflow.rich.bean.QuoteView;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -115,7 +121,131 @@ public class StdStrategy extends BaseStrategy{
         }
     }
 
+    public String breachView(List<QuoteView> beans, int diffTime){
+        StringBuilder sb = new StringBuilder();
+        StdRichBean bean = breach(beans, diffTime);
+        sb.append("<br/>")
+                .append("预测明日承压线，time: " + bean.getDate())
+                .append(", price: " + bean.getPrice())
+                .append(", std content: ");
 
+        String line = String.format("-2std: %s, -1std: %s, +1std: %s, +2std: %s",
+                String.format("%.2f", bean.getP2fsd()),
+                String.format("%.2f", bean.getP1fsd()),
+                String.format("%.2f", bean.getP1sd()),
+                String.format("%.2f", bean.getP2sd()));
+
+        sb.append(line)
+                .append("<br/><br/>");
+
+        return sb.toString();
+    }
+
+    public StdRichBean breach(List<QuoteView> beans, int diffTime){
+
+        int size = beans.size();
+
+        if(size > 2 * diffTime) {
+            beans = beans.subList(size - 2 * diffTime, size);
+        }
+
+        // 初始化现有std
+        convert2CommonStd(beans, diffTime);
+        StdRichBean last = beans.get(beans.size() - 1);
+        double x = 0.003 * last.getPrice();
+
+        int cnt = 0;
+        double newP2fsd = 0;
+        double newP1fsd = 0;
+        double newP1sd = 0;
+        double newP2sd = 0;
+
+        breanchLoop: while(true) {
+            if(newP2fsd > 0 && newP1fsd > 0 && newP1sd > 0 && newP2sd > 0) {
+                break breanchLoop;
+            }
+
+            QuoteView append = new QuoteView();
+            append.setTime(DateUtils.addDays(last.getTime(), 1));
+            append.setDate(DateFormatUtils.format(append.getTime(), "yyyy-MM-dd"));
+            append.setPrice(last.getPrice() + x * cnt);
+            append.setPre(last);
+            beans.add(append);
+            convert2CommonStd(beans, diffTime);
+            QuoteView newLast = beans.get(beans.size()-1);
+
+            beans = beans.subList(0, beans.size()-1);
+
+            // -2std up
+            if(newP2fsd == 0 && (last.getPrice() < last.getP2fsd() && newLast.getPrice() > newLast.getP2fsd())) {
+                newP2fsd = newLast.getPrice();
+            }
+
+            // -2std down
+            if(newP2fsd == 0 && (last.getPrice() > last.getP2fsd() && newLast.getPrice() < newLast.getP2fsd())) {
+                newP2fsd = newLast.getPrice();
+            }
+
+            // -1std up
+            if(newP1fsd == 0 && (last.getPrice() < last.getP1fsd() && newLast.getPrice() > newLast.getP1fsd())) {
+                newP1fsd = newLast.getPrice();
+            }
+
+            // -1std down
+            if(newP1fsd == 0 && (last.getPrice() > last.getP1fsd() && newLast.getPrice() < newLast.getP1fsd())) {
+                newP1fsd = newLast.getPrice();
+            }
+
+            // +1std up
+            if(newP1sd == 0 && (last.getPrice() < last.getP1sd() && newLast.getPrice() > newLast.getP1sd())) {
+                newP1sd = newLast.getPrice();
+            }
+
+            // +1std down
+            if(newP1sd == 0 && (last.getPrice() > last.getP1sd() && newLast.getPrice() < newLast.getP1sd())) {
+                newP1sd = newLast.getPrice();
+            }
+
+            // +2std up
+            if(newP2sd == 0 && (last.getPrice() < last.getP2sd() && newLast.getPrice() > newLast.getP2sd())) {
+                newP2sd = newLast.getPrice();
+            }
+
+            // +2std down
+            if(newP2sd == 0 && (last.getPrice() > last.getP2sd() && newLast.getPrice() < newLast.getP2sd())) {
+                newP2sd = newLast.getPrice();
+            }
+
+            if(cnt == 0) {
+                cnt = 1;
+            }else if(cnt > 0) {
+                cnt = cnt * -1;
+            }else if(cnt < 0) {
+                cnt = cnt * -1 + 1;
+            }
+        }
+
+        StdRichBean result = new StdRichBean();
+        result.setTime(DateUtils.addDays(last.getTime(), 1));
+        result.setDate(DateFormatUtils.format(result.getTime(), "yyyy-MM-dd"));
+        result.setPrice(last.getPrice());
+        result.setP2fsd(newP2fsd);
+        result.setP1fsd(newP1fsd);
+        result.setP1sd(newP1sd);
+        result.setP2sd(newP2sd);
+
+        return result;
+    }
+
+//    public static void main(String[] args) {
+//        List list = new ArrayList();
+//        list.add("1"); // 0
+//        list.add("2"); // 1
+//        list.add("3"); // 2
+//        list.add("4"); // 3
+//        System.out.println(JSON.toJSONString(list.subList(0,3)));
+//        System.out.println(JSON.toJSONString(list.subList(1,2)));
+//    }
 
     @Override
     public void deal4Debug(RichBean richBean, RichBean pre, int buyShare) {

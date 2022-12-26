@@ -162,6 +162,24 @@ public class HttpUtil {
         return true;
     }
 
+    public static boolean downloadWithHeader(String url, String filePath) {
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header("Authorization", "APPCODE 543c83ec3f0b4978a833447a15fa8079")
+                    .header("Content-Type", "text/html; charset=utf-8")
+                    .build();
+            Response response = HTTP_CLIENT.newCall(request).execute();
+            byte[] bytes = response.body().bytes();
+
+            FileUtils.writeByteArrayToFile(new File(filePath), bytes);
+        } catch (Exception e) {
+            logger.error("执行download请求，url: {} 失败!", url, e);
+            return false;
+        }
+        return true;
+    }
+
     /**
      * 设置请求头
      *
