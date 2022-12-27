@@ -10,7 +10,7 @@ public class SecTest {
 	Logger logger = LoggerFactory.getLogger(SecTest.class);
 
 	@Test
-	public void secTest() throws Exception{
+	public void secTest() {
 
 		long[] data = new long[]{0, 1, 19,100009,765432189};
 
@@ -20,7 +20,6 @@ public class SecTest {
 
 			logger.info("true unit is {}, sec : {}, dec : {}", unit, sec, dec);
 		}
-
 	}
 }
 
