@@ -294,6 +294,11 @@ public class QuoteService {
                     .append("</br>");
         }
 
+        String hkUrl = String.format("<a href=\"http://rich.ccopen.top/quote/hk/std?skipYear=-2&code=%s&month=2\">呷哺呷哺-港股std详情</a>", "00520");;
+        sb.append("</br>")
+                .append(hkUrl)
+                .append("</br>");
+
         return sb.toString();
     }
 
