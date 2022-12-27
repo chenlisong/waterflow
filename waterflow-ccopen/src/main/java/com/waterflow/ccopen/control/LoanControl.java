@@ -59,6 +59,8 @@ public class LoanControl {
 
             double fundmonthRate = fundRate / (100 * 12);//月利率
             double fundpreLoan = (fundLoan * fundmonthRate * Math.pow((1 + fundmonthRate), months)) / (Math.pow((1 + fundmonthRate), months) - 1);//每月还款金额
+            fundpreLoan = Double.isNaN(fundpreLoan) ? 0 : fundpreLoan;
+
             double fundtotalMoney = fundpreLoan * months;//还款总额
             double fundinterest = totalMoney - fundLoan;//还款总利息
 
