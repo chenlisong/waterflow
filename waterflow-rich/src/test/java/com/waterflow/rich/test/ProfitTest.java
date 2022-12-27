@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -55,11 +56,8 @@ public class ProfitTest {
 
     static double sellPer = 0.5;
 
-    String[] fundCodes = new String[] {
-            "004432", "110020", "501302", "004488", "004532", "003765", "004069", "002656", "001631", "001455",
-            "0600428", "0601020", "0600150", "0601989", "1002594",
-            "159915", "159920", "159919", "159922", "159949", "159941", "159865", "159857", "159883", "159870", "159828", "159952", "159938", "159813", "159905", "159916", "159869", "159929", "159837", "159867", "159801", "159843", "159861", "159939", "159824", "159886", "159850", "159945", "159930", "159954", "159839", "159871"};
-
+    @Value(value="${quote.codes}")
+    String quoteCodes;
     @Test
     public void less2Year() throws Exception {
 
@@ -68,7 +66,7 @@ public class ProfitTest {
 
         List<String> result = new ArrayList<>();
 
-        for(String code : fundCodes) {
+        for(String code : quoteCodes.split(",")) {
             if(code.length() == 6) {
                 List<RichBean> richBeans = fundGrab.autoGrabFundData(code);
                 RichBean richBean = richBeans.get(0);
@@ -93,7 +91,7 @@ public class ProfitTest {
     public void stdTimes() throws Exception{
 //        String[] fundCodes = new String[] {"159852"};
 
-        List<CheckView> views = quoteService.checkView(fundCodes);
+        List<CheckView> views = quoteService.checkView(quoteCodes.split(","));
 
         logger.info("views is {}", JSON.toJSONString(views));
 

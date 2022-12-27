@@ -81,28 +81,33 @@ public class QuoteGrab {
 
         List<Quote> result = new ArrayList<>();
         lineLoop : for(String line: lines) {
-            String[] lineSplit = line.split(",");
-            if(lineSplit[0] != null && lineSplit[0].equals("日期"))
-                continue lineLoop;
+            try{
+                String[] lineSplit = line.split(",");
+                if(lineSplit[0] != null && lineSplit[0].equals("日期"))
+                    continue lineLoop;
 
-            String date = lineSplit[0];
-            double closePrice = Double.parseDouble(lineSplit[3]);
-            double highPrice = Double.parseDouble(lineSplit[4]);
-            double lowPrice = Double.parseDouble(lineSplit[5]);
-            double beginPrice = Double.parseDouble(lineSplit[6]);
-            int vol = Integer.parseInt(lineSplit[10]);
+                String date = lineSplit[0];
+                double closePrice = Double.parseDouble(lineSplit[3]);
+                double highPrice = Double.parseDouble(lineSplit[4]);
+                double lowPrice = Double.parseDouble(lineSplit[5]);
+                double beginPrice = Double.parseDouble(lineSplit[6]);
+                long volLong = Long.parseLong(lineSplit[10]) / 10000;
+                int vol = (int)volLong;
 
-            Quote quote = new Quote();
-            quote.setDate(date);
-            quote.setTime(DateUtils.parseDate(date, "yyyy-MM-dd"));
+                Quote quote = new Quote();
+                quote.setDate(date);
+                quote.setTime(DateUtils.parseDate(date, "yyyy-MM-dd"));
 
-            quote.setClosePrice(closePrice);
-            quote.setHighPrice(highPrice);
-            quote.setLowPrice(lowPrice);
-            quote.setBeginPrice(beginPrice);
-            quote.setVol(vol);
-            quote.setPrice(closePrice);
-            result.add(quote);
+                quote.setClosePrice(closePrice);
+                quote.setHighPrice(highPrice);
+                quote.setLowPrice(lowPrice);
+                quote.setBeginPrice(beginPrice);
+                quote.setVol(vol);
+                quote.setPrice(closePrice);
+                result.add(quote);
+            }catch (Exception e) {
+                logger.error("error.", e);
+            }
         }
 
         result = result.stream()

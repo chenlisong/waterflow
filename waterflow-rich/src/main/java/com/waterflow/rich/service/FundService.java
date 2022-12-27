@@ -15,6 +15,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,9 +40,10 @@ public class FundService {
     @Autowired
     RetreatStrategy retreat;
 
-    Logger logger = LoggerFactory.getLogger(FundService.class);
+    @Value(value="${quote.codes}")
+    String quoteCodes;
 
-    public static String[] FUNDCODES = new String[]{"004432", "110020", "004642", "501302", "004488", "004597", "004532", "003765", "004069", "002656", "001539", "001631", "001455"};
+    Logger logger = LoggerFactory.getLogger(FundService.class);
 
     public List<NoticeBean> fundTable(String[] fundCodes) {
         List<NoticeBean> noticeBeans = new ArrayList<>();

@@ -27,6 +27,9 @@ public class FundTask {
     @Value(value="${spring.profiles.active}")
     String profile;
 
+    @Value(value="${quote.codes}")
+    String quoteCodes;
+
 //    @Scheduled(initialDelay = 1000, fixedRate = 3000 * 10000)
     public void asyncCall() {
         try{
@@ -39,7 +42,7 @@ public class FundTask {
     @Scheduled(cron = "0 40 6,15 * * ?")
     public void scheduledTask() {
 
-        List<NoticeBean> noticeBeans = fundService.fundTable(FundService.FUNDCODES);
+        List<NoticeBean> noticeBeans = fundService.fundTable(quoteCodes.split(","));
 
         StringBuilder content = new StringBuilder();
         content.append("<iframe src=\"http://rich.ccopen.top/fund/antv-table\" width=\"100%\" height=\"100%\"/>");

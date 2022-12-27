@@ -18,6 +18,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,9 @@ public class FundTableController {
     @Autowired
     FundService fundService;
 
+    @Value(value="${quote.codes}")
+    String quoteCodes;
+
     @RequestMapping("/antv-table")
     public String fundTable(Model model, @RequestParam(value = "refresh", defaultValue = "false") boolean refresh) {
         String key = "rich::fund::antv-table";
@@ -63,7 +67,7 @@ public class FundTableController {
             return "antv-table";
         }
 
-        List<NoticeBean> newNoticeBeans = fundService.fundTable(FundService.FUNDCODES);
+        List<NoticeBean> newNoticeBeans = fundService.fundTable(quoteCodes.split(","));
 
         List<JSONObject> result = new ArrayList<>();
         for(NoticeBean noticeBean: newNoticeBeans) {

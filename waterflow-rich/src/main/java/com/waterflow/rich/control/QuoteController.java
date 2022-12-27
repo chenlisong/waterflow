@@ -16,6 +16,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,9 @@ public class QuoteController {
 
     @Autowired
     HkGrab hkGrab;
+
+    @Value(value="${quote.codes}")
+    String quoteCodes;
 
     @RequestMapping("/fund/std")
     public String fundStd(Model model, @RequestParam(value = "code", defaultValue = "0600150") String code,
@@ -319,11 +323,7 @@ public class QuoteController {
     @RequestMapping("/checkview")
     public String checkview(Model model) {
 
-        String[] codes = new String[] {
-                "004432", "110020", "501302", "004488", "004532", "003765", "004069", "002656", "001631", "001455",
-                "0600428", "0601020", "0600150", "0601989", "1002594",
-                "159915", "159920", "159919", "159922", "159949", "159941", "159865", "159857", "159883", "159870", "159828", "159952", "159938", "159813", "159905", "159916", "159869", "159929", "159837", "159867", "159801", "159843", "159861", "159939", "159824", "159886", "159850", "159945", "159930", "159954", "159839", "159871"};
-
+        String[] codes = quoteCodes.split(",");
         try{
             String cacheKey = "checkview::data";
             String html = LocalCacheUtil.instance().getWithTtl(cacheKey, 2);
