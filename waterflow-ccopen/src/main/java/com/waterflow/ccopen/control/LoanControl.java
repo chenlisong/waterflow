@@ -54,6 +54,7 @@ public class LoanControl {
         if(repayType == 1) {
             double monthRate = commerRate / (100 * 12);//月利率
             double preLoan = (commerLoan * monthRate * Math.pow((1 + monthRate), months)) / (Math.pow((1 + monthRate), months) - 1);//每月还款金额
+            preLoan = Double.isNaN(preLoan) ? 0 : preLoan;
             double totalMoney = preLoan * months;//还款总额
             double interest = totalMoney - commerLoan;//还款总利息
 
@@ -171,6 +172,7 @@ public class LoanControl {
         if(type == 1 && repayType == 1) {
             double monthRate = rate / (100 * 12);//月利率
             double preLoan = (principal * monthRate * Math.pow((1 + monthRate), months)) / (Math.pow((1 + monthRate), months) - 1);//每月还款金额
+            preLoan = Double.isNaN(preLoan) ? 0 : preLoan;
             double totalMoney = preLoan * months;//还款总额
             double interest = totalMoney - principal;//还款总利息
             double leftLoan = principal * Math.pow(1 + monthRate, payTimes) - preLoan * (Math.pow(1 + monthRate, payTimes) - 1) / monthRate;//n个月后欠银行的钱
@@ -225,6 +227,7 @@ public class LoanControl {
         }else if(type == 2 && repayType == 1 && prePayType == 1) {
             double monthRate = rate / (100 * 12);//月利率
             double preLoan = (principal * monthRate * Math.pow((1 + monthRate), months)) / (Math.pow((1 + monthRate), months) - 1);//每月还款金额
+            preLoan = Double.isNaN(preLoan) ? 0 : preLoan;
             double totalMoney = preLoan * months;//还款总额
             double interest = totalMoney - principal;//还款总利息
             double leftLoanBefore = principal * Math.pow(1 + monthRate, payTimes) - preLoan * (Math.pow(1 + monthRate, payTimes) - 1) / monthRate;//提前还款前欠银行的钱
@@ -300,6 +303,7 @@ public class LoanControl {
         }else if(type == 2 && repayType == 1 && prePayType == 2) {
             double monthRate = rate / (100 * 12);//月利率
             double preLoan = (principal * monthRate * Math.pow((1 + monthRate), months)) / (Math.pow((1 + monthRate), months) - 1);//每月还款金额
+            preLoan = Double.isNaN(preLoan) ? 0 : preLoan;
             double totalMoney = preLoan * months;//还款总额
             double interest = totalMoney - principal;//还款总利息
             double leftLoanBefore = principal * Math.pow(1 + monthRate, payTimes ) - preLoan * (Math.pow(1 + monthRate, payTimes ) - 1) / monthRate;//提前还款前欠银行的钱
