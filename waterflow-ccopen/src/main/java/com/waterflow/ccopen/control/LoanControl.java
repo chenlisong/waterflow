@@ -62,7 +62,7 @@ public class LoanControl {
             fundpreLoan = Double.isNaN(fundpreLoan) ? 0 : fundpreLoan;
 
             double fundtotalMoney = fundpreLoan * months;//还款总额
-            double fundinterest = totalMoney - fundLoan;//还款总利息
+            double fundinterest = fundtotalMoney - fundLoan;//还款总利息
 
             result.setTotalMoney(totalMoney + fundtotalMoney);
             result.setPrincipal(commerLoan + fundLoan);
