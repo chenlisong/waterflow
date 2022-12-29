@@ -177,7 +177,8 @@ public class QuoteController {
     @RequestMapping("/std")
     public String std(Model model, @RequestParam(value = "code", defaultValue = "0600150") String code,
                       @RequestParam(value = "month", defaultValue = "3") int month,
-                      @RequestParam(value = "skipYear", defaultValue = "-3") int skipYear) {
+                      @RequestParam(value = "skipYear", defaultValue = "-3") int skipYear,
+                      @RequestParam(value = "price", defaultValue = "-1") double price) {
         logger.info("quote std exec, code is {}...", code);
 
         quoteGrab.downloadQuoteFile(code);
@@ -191,6 +192,8 @@ public class QuoteController {
                         return QuoteView.convert(quote);
                     })
                     .collect(Collectors.toList());
+            quoteService.appendBreach(quoteViews, price);
+
             quoteService.writeLink(quoteViews);
 
             int diffTime = month * 20;

@@ -7,6 +7,7 @@ import com.waterflow.rich.bean.QuoteView;
 import com.waterflow.rich.grab.FundGrab;
 import com.waterflow.rich.grab.QuoteGrab;
 import com.waterflow.rich.strategy.RichBean;
+import com.waterflow.rich.strategy.StdRichBean;
 import com.waterflow.rich.strategy.StdStrategy;
 import com.waterflow.rich.util.LocalCacheUtil;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -45,6 +46,25 @@ public class QuoteService {
 
             preView = quoteView;
         }
+    }
+
+    public void appendBreach(List<QuoteView> quoteViews, double price) {
+        if(price <= 0) {
+            return;
+        }
+
+        QuoteView last = quoteViews.stream().max(Comparator.comparing(QuoteView::getTime)).get();
+
+        QuoteView append = new QuoteView();
+        append.setTime(DateUtils.addDays(last.getTime(), 1));
+        append.setDate(DateFormatUtils.format(append.getTime(), "yyyy-MM-dd"));
+        append.setPrice(price);
+        append.setClosePrice(price);
+        append.setLowPrice(price);
+        append.setBeginPrice(price);
+        append.setHighPrice(price);
+
+        quoteViews.add(append);
     }
 
     public void signleDo(List<QuoteView> quoteViews, double stand) throws Exception{
