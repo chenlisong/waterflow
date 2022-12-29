@@ -27,6 +27,9 @@ public class Novel implements Serializable {
     @Column(name = "url")
     private String url;
 
+    @Column(name = "content")
+    private String content;
+
     @Column(name = "create_time")
     private Date createTime;
 
@@ -84,5 +87,13 @@ public class Novel implements Serializable {
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

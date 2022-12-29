@@ -2,6 +2,8 @@ package com.example.demo;
 
 import com.alibaba.fastjson.JSON;
 import com.waterflow.ccopen.bean.AdLog;
+import com.waterflow.ccopen.bean.Catalog;
+import com.waterflow.ccopen.bean.Novel;
 import com.waterflow.ccopen.dao.AdLogDao;
 import com.waterflow.ccopen.init.Application;
 import com.waterflow.ccopen.service.ReaderService;
@@ -19,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootTest(classes= Application.class)
 @RunWith(SpringRunner.class)
@@ -58,8 +61,55 @@ public class ReaderTest {
 
         WebDriver webDriver = readerService.driver();
 
-        readerService.listBook(webDriver, url);
+        readerService.listBook(webDriver, url, new Novel());
 
         webDriver.quit();
+    }
+
+    @Test
+    public void grabTest() throws Exception{
+        String url = "http://www.quanben.io";
+        WebDriver webDriver = readerService.driver();
+
+        Map<String, String> cMap = readerService.listC(webDriver, url);
+
+        for(String text: cMap.keySet()) {
+            String cUrl = cMap.get(text);
+            cLoop: for(int i=1; i<5; i++) {
+                String tempBookUrl = cUrl.replace(".html", "_" + i + ".html");
+
+                // 书名、url
+                List<String> urls = readerService.loop(webDriver, tempBookUrl);
+
+                for(String bookUrl: urls) {
+                    Novel novel = new Novel();
+                    List<Catalog> catalogs = readerService.listBook(webDriver, bookUrl+"list.html", novel);
+
+                    long novelId = readerService.insertNovel(novel);
+                    catalogs.stream().forEach(catalog -> catalog.setNovelId(novelId));
+
+                    readerService.batchInsertCatalog(catalogs);
+                    logger.info("book insert suc. name is: {}", novel.getName());
+                }
+
+                if(urls == null || urls.size() < 12) {
+                    break cLoop;
+                }
+            }
+        }
+
+        webDriver.quit();
+    }
+
+    @Test
+    public void insertSqlTest() {
+        Novel novel = new Novel();
+        novel.setName("123");
+        novel.setTypeName("123");
+        novel.setContent("123");
+        novel.setCreateTime(new Date());
+        novel.setAuthor("author");
+        long id = readerService.insertNovel(novel);
+        logger.info("id : {}", id);
     }
 }

@@ -15,16 +15,13 @@ public class Catalog implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "chap")
-    private Integer chap;
-
     @Column(name = "novel_id")
     private Long novelId;
 
     @Column(name = "url")
     private String url;
 
-    @Column(name = "fileIndex")
+    @Column(name = "file_index")
     private Long fileIndex;
 
     @Column(name = "create_time")
@@ -44,14 +41,6 @@ public class Catalog implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getChap() {
-        return chap;
-    }
-
-    public void setChap(Integer chap) {
-        this.chap = chap;
     }
 
     public Long getNovelId() {

@@ -21,9 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ReaderService {
@@ -85,31 +86,84 @@ public class ReaderService {
         FileUtils.writeStringToFile(writeFile, content, "UTF-8", true);
     }
 
-    // https://www.xxbqg5200.com/shu/421/
-    public void listBook(WebDriver driver, String url) throws Exception{
-
+    // http://www.quanben.io/n/chuanyuejizhanshijie/list.html 找到所有章节
+    public List<Catalog> listBook(WebDriver driver, String url, Novel novel) throws Exception{
+        List<Catalog> catalogs = new ArrayList<>();
+        Map<String, String> result = new LinkedHashMap<>();
         driver.get(url);
         driver.findElement(By.cssSelector("a[href='javascript:void(0)']")).click();
 
-        String resp = driver.getPageSource();
-        logger.info("exec url: {}, size: {}", url, resp.length());
+        WebElement author = driver.findElement(By.cssSelector("span[itemprop='author']"));
+        WebElement name = driver.findElement(By.cssSelector("span[itemprop='name']"));
+        WebElement type = driver.findElement(By.cssSelector("span[itemprop='category']"));
+        WebElement description = driver.findElement(By.cssSelector("div[itemprop='description']"));
+
+        Date now = new Date();
+        novel.setAuthor(author.getText());
+        novel.setTypeName(type.getText());
+        novel.setContent(description.getText());
+        novel.setName(name.getText());
+        novel.setCreateTime(now);
+        novel.setLastChap(0);
+        novel.setUrl(url);
 
         List<WebElement> chaps = driver.findElements(By.cssSelector("a[itemprop='url']"));
         for(WebElement chap: chaps) {
             String href = chap.getAttribute("href");
             String text = chap.getText();
             logger.info("href: {}, text: {}", href, text);
+            Catalog catalog = new Catalog();
+            catalog.setCreateTime(now);
+            catalog.setFileIndex(0L);
+            catalog.setName(text);
+            catalog.setUrl(href);
+            catalogs.add(catalog);
         }
+
+        return catalogs;
+    }
+
+    // quanben.io // 遍历首页，找目录
+    public Map<String, String> listC(WebDriver driver, String url) throws Exception{
+        Map<String, String> result = new LinkedHashMap<>();
+
+        driver.get(url);
+        List<WebElement> chaps = driver.findElements(By.cssSelector("a[itemprop='url']"));
+        for(WebElement chap: chaps) {
+            String href = chap.getAttribute("href");
+            String text = chap.getText();
+
+            if(href != null && href.contains("www.quanben.io/c/") && !result.containsKey(text)) {
+                result.put(text, href);
+            }
+        }
+
+        return result;
+    }
+
+    // quanben.io 循环目录，找书
+    public List<String> loop(WebDriver driver, String url) throws Exception{
+        List<String> urls = new ArrayList<>();
+
+        driver.get(url);
+        List<WebElement> chaps = driver.findElements(By.cssSelector("a[itemprop='url']"));
+        for(WebElement chap: chaps) {
+            String href = chap.getAttribute("href");
+            String text = chap.getText();
+
+            if(href != null && href.contains("www.quanben.io/n/")) {
+                urls.add(href);
+            }
+        }
+
+        return urls;
     }
 
     public long insertNovel(Novel novel) {
-        if(novel == null || StringUtils.isEmpty(novel.getName()) || StringUtils.isEmpty(novel.getTypeName())) {
-            return -1;
-        }
 
-        novelDao.deleteByName(novel.getTypeName(), novel.getName());
+//        novelDao.deleteByName(novel.getTypeName(), novel.getName());
 
-        novelDao.save(novel);
+        novelDao.saveAndFlush(novel);
         return novel.getId();
     }
 
@@ -123,6 +177,7 @@ public class ReaderService {
         for(List<Catalog> unit: Lists.partition(catalogs, 50)) {
             catalogDao.saveAll(unit);
         }
+        catalogDao.flush();
     }
 
 }
