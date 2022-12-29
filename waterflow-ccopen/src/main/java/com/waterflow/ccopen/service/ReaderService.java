@@ -1,30 +1,29 @@
 package com.waterflow.ccopen.service;
 
+import com.google.common.collect.Lists;
+import com.waterflow.ccopen.bean.Catalog;
+import com.waterflow.ccopen.bean.Novel;
+import com.waterflow.ccopen.dao.CatalogDao;
+import com.waterflow.ccopen.dao.NovelDao;
 import com.waterflow.common.util.HttpUtil;
 import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.nio.charset.Charset;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxBinary;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ReaderService {
@@ -33,6 +32,12 @@ public class ReaderService {
 
     @Value("${reader.file.path}")
     String readerfilePath;
+
+    @Autowired
+    NovelDao novelDao;
+
+    @Autowired
+    CatalogDao catalogDao;
 
     // http://www.quanben.io/n/laobingchuanqi/list.html
     public void detail(String url) {
@@ -57,7 +62,6 @@ public class ReaderService {
 //        options.addArguments("--incognito"); // 无痕模式
 
         System.setProperty("webdriver.chrome.driver", "/Users/chenlisong/Downloads/app/chromedriver");
-//        System.setProperty("webdriver.chrome.driver", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome");
 
         DesiredCapabilities chrome = DesiredCapabilities.chrome();
         chrome.setCapability(ChromeOptions.CAPABILITY,options);
@@ -79,13 +83,6 @@ public class ReaderService {
         String content = doc.select("#content").text();
 
         FileUtils.writeStringToFile(writeFile, content, "UTF-8", true);
-
-//        resp = new String(resp.getBytes(), "UTF-8");
-//        Document doc = Jsoup.parse(resp);
-//        Elements links = doc.select("a[href]");
-//        for(Element element: links) {
-//            logger.info("href is {}, content is {}", element.attr("href"), element.text());
-//        }
     }
 
     // https://www.xxbqg5200.com/shu/421/
@@ -93,12 +90,6 @@ public class ReaderService {
 
         driver.get(url);
         driver.findElement(By.cssSelector("a[href='javascript:void(0)']")).click();
-
-//        WebElement element = driver.findElement(By.cssSelector("a[href='javascript:void(0)']"));
-//        logger.info("WebElement: {}", element.getAttribute("onclick"));
-//
-//        JavascriptExecutor js = (JavascriptExecutor)driver;
-//        js.executeScript(element.getAttribute("onclick"));
 
         String resp = driver.getPageSource();
         logger.info("exec url: {}, size: {}", url, resp.length());
@@ -109,26 +100,28 @@ public class ReaderService {
             String text = chap.getText();
             logger.info("href: {}, text: {}", href, text);
         }
-
-
-//        FileUtils.writeStringToFile(writeFile, content, "UTF-8", true);
-
     }
 
-    public void downloadWithFirefox(String url) throws Exception{
-        FirefoxBinary firefoxBinary = new FirefoxBinary();
-        firefoxBinary.addCommandLineOptions("--headless");
-        System.setProperty("webdriver.gecko.driver", "/Users/chenlisong/Downloads/app/geckodriver");
-        FirefoxOptions firefoxOptions = new FirefoxOptions();
-        firefoxOptions.setBinary(firefoxBinary);
-        FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
-        try {
-            driver.get(url);
-            driver.manage().timeouts().implicitlyWait(4,
-                    TimeUnit.SECONDS);
-            System.out.println(driver.getPageSource());
-        } finally {
-            driver.quit();
+    public long insertNovel(Novel novel) {
+        if(novel == null || StringUtils.isEmpty(novel.getName()) || StringUtils.isEmpty(novel.getTypeName())) {
+            return -1;
+        }
+
+        novelDao.deleteByName(novel.getTypeName(), novel.getName());
+
+        novelDao.save(novel);
+        return novel.getId();
+    }
+
+    public void batchInsertCatalog(List<Catalog> catalogs) {
+        if(catalogs == null || catalogs.size() <= 0) {
+            return;
+        }
+
+        catalogDao.deleteByName(catalogs.get(0).getNovelId());
+
+        for(List<Catalog> unit: Lists.partition(catalogs, 50)) {
+            catalogDao.saveAll(unit);
         }
     }
 
